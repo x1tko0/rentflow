@@ -2,16 +2,19 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../generated/app_localizations.dart';
 import '../features/dashboard/dashboard_screen.dart';
+import '../features/onboarding/onboarding_screen.dart';
 import '../features/properties/presentation/properties_screen.dart';
 import '../features/tenants/presentation/tenants_screen.dart';
 import '../features/payments/presentation/payments_screen.dart';
 import '../features/expenses/presentation/expenses_screen.dart';
 import '../features/reports/reports_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../main.dart';
 
-final appRouter = GoRouter(
-  initialLocation: '/',
+GoRouter createAppRouter() => GoRouter(
+  initialLocation: (globalPrefs.getBool('onboarding_done') ?? false) ? '/' : '/onboarding',
   routes: [
+    GoRoute(path: '/onboarding', builder: (ctx, _) => const OnboardingScreen()),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
       routes: [

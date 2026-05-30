@@ -416,7 +416,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get dataSection => 'データ';
 
   @override
+  String get proSection => 'Pro機能';
+
+  @override
   String get backupToGoogleDrive => 'Google Driveにバックアップ';
+
+  @override
+  String get restorePurchases => '購入を復元';
+
+  @override
+  String get restorePurchasesSuccess => '購入が復元されました';
 
   @override
   String get restoreFromBackup => 'バックアップから復元';
@@ -440,10 +449,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get backupFailed => 'バックアップが失敗しました';
 
   @override
-  String get dataRestored => 'データが復元されました。アプリを再起動してください。';
+  String get dataRestored => 'データが正常に復元されました';
 
   @override
   String get backupNotFound => 'バックアップが見つかりません';
+
+  @override
+  String get restartApp => '再起動';
 
   @override
   String get theme => 'テーマ';
@@ -461,16 +473,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get currency => '通貨';
 
   @override
-  String get proDescription => '最大10物件、PDFレポート、クラウドバックアップ';
+  String get proDescription => '最大20物件、PDFレポート、クラウドバックアップ';
 
   @override
-  String get proCta => '2.99\$/月で試してみる';
+  String get proCta => '6.99\$/月で試してみる';
 
   @override
   String get perMonth => '/月';
 
   @override
-  String get proCtaYearly => 'または\$24.99/年';
+  String get proCtaYearly => 'または\$59.99/年';
 
   @override
   String get deleteExpenseTitle => '支出を削除しますか？';
@@ -488,6 +500,272 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get proFeatureMessage => 'PRO版で利用可能';
+
+  @override
+  String get onboardingSkip => 'スキップ';
+
+  @override
+  String get onboardingNext => '次へ';
+
+  @override
+  String get onboardingStart => '始める';
+
+  @override
+  String get onboarding1Title => 'RentFlowへようこそ';
+
+  @override
+  String get onboarding1Body => '個人オーナーのためのシンプルな賃貸管理';
+
+  @override
+  String get onboarding2Title => '物件 & 入居者';
+
+  @override
+  String get onboarding2Body => '物件と入居者を数秒で追加';
+
+  @override
+  String get onboarding3Title => '支払い & レポート';
+
+  @override
+  String get onboarding3Body => '収入、支出、延滞をリアルタイムで追跡';
+
+  @override
+  String get notificationPaymentTitle => '支払いリマインダー';
+
+  @override
+  String get notificationLeaseEndTitle => '賃貸契約がもうすぐ終了します';
+
+  @override
+  String notificationLeaseEndBody(String name, String date) {
+    return '$name — 契約終了日: $date';
+  }
+
+  @override
+  String get pdfReportTitlePrefix => '財務レポート';
+
+  @override
+  String get pdfSummary => 'サマリー';
+
+  @override
+  String get pdfByMonths => '月別';
+
+  @override
+  String get pdfNet => '純利益';
+
+  @override
+  String get pdfTotal => '合計';
+
+  @override
+  String get pdfGeneratedBy => 'RentFlowで生成';
+
+  @override
+  String get paymentHistory => '支払い履歴';
+
+  @override
+  String get totalPaid => '合計支払額';
+
+  @override
+  String get thisMonth => '今月';
+
+  @override
+  String get allTime => '全期間';
+
+  @override
+  String get search => '検索';
+
+  @override
+  String get searchHint => '名前または電話番号で検索…';
+
+  @override
+  String get noResults => '結果なし';
+
+  @override
+  String get propertyDetails => '物件詳細';
+
+  @override
+  String get recurringExpenses => '定期的な支出';
+
+  @override
+  String get repeatMonthly => '毎月繰り返す';
+
+  @override
+  String get repeatDay => '月の日付';
+
+  @override
+  String get recurringExpenseHint => '毎月この日に自動作成されます';
+
+  @override
+  String get noRecurringExpenses => '定期支出なし';
+
+  @override
+  String get addRecurringExpense => 'テンプレートを追加';
+
+  @override
+  String get proFeatureRecurring => '定期支出はPro機能です';
+
+  @override
+  String get customCategories => 'カスタムカテゴリ';
+
+  @override
+  String get addCategory => 'カテゴリを追加';
+
+  @override
+  String get categoryName => 'カテゴリ名';
+
+  @override
+  String get yourCategories => 'あなたのカテゴリ';
+
+  @override
+  String get proFeatureCategories => 'カスタムカテゴリはPro機能です';
+
+  @override
+  String get meterReadings => 'メーター読み取り';
+
+  @override
+  String get addReading => '読み取りを追加';
+
+  @override
+  String get lastReading => '最後の読み取り';
+
+  @override
+  String get consumption => '消費量';
+
+  @override
+  String get noReadings => 'まだ読み取りがありません';
+
+  @override
+  String get meterWaterCold => '冷水';
+
+  @override
+  String get meterWaterHot => '温水';
+
+  @override
+  String get meterGas => 'ガス';
+
+  @override
+  String get meterElectricity => '電気';
+
+  @override
+  String get meterHeat => '暖房';
+
+  @override
+  String get meterElectricityT1 => '電力T1（昼間）';
+
+  @override
+  String get meterElectricityT2 => '電力T2（夜間）';
+
+  @override
+  String get meterElectricityT3 => '電気T3（夕方）';
+
+  @override
+  String get meterHistory => '検針履歴';
+
+  @override
+  String get meterPdfTitle => 'メーター読み取りレポート';
+
+  @override
+  String get meterPdfPrevious => '前回';
+
+  @override
+  String get meterPdfCurrent => '今回';
+
+  @override
+  String get meterPdfElecTotal => '電力（合計）';
+
+  @override
+  String get meterPdfTotalConsumption => '総消費量';
+
+  @override
+  String get meterPdfGeneratedBy => 'RentFlowで生成';
+
+  @override
+  String get customType => 'カスタムタイプ';
+
+  @override
+  String get editReading => '編集';
+
+  @override
+  String get typeName => 'タイプ名';
+
+  @override
+  String get selectPeriod => '期間を選択';
+
+  @override
+  String get pdfPeriod => '期間';
+
+  @override
+  String get readingValue => 'メーター値';
+
+  @override
+  String get notifyDaysBefore => '事前通知（日前）';
+
+  @override
+  String get exportCsv => 'CSVエクスポート';
+
+  @override
+  String get csvCopied => 'CSVをクリップボードにコピーしました';
+
+  @override
+  String get faqTitle => 'ヘルプ';
+
+  @override
+  String get faqHowToUseTab => '使い方';
+
+  @override
+  String get faqProTab => 'PRO';
+
+  @override
+  String get faqGettingStarted => 'はじめに';
+
+  @override
+  String get faqStep1Title => '物件を追加';
+
+  @override
+  String get faqStep1Body => '「物件」→「+」で名称、住所、タイプを入力して物件を登録します。';
+
+  @override
+  String get faqStep2Title => '入居者を追加';
+
+  @override
+  String get faqStep2Body => '「賃借人」→「+」で情報を入力し、物件・賃料・支払日を設定します。';
+
+  @override
+  String get faqStep3Title => '支払いを記録';
+
+  @override
+  String get faqStep3Body => '「支払い」→「+」で支払いを追加。行を右にスワイプして即座に支払済みにできます。';
+
+  @override
+  String get faqStep4Title => '経費を追跡';
+
+  @override
+  String get faqStep4Body => '「経費」→「+」でコストを追加し、物件に紐付けてカテゴリを選択します。';
+
+  @override
+  String get faqStep5Title => 'レポートを表示';
+
+  @override
+  String get faqStep5Body => '「レポート」では年間収入・支出・純利益をグラフと月別表で確認できます。';
+
+  @override
+  String get faqTipsTitle => 'ヒント';
+
+  @override
+  String get faqTip1 => '支払い行を右にスワイプするとフォームを開かずに支払済みにできます。';
+
+  @override
+  String get faqTip2 => '賃借人や物件のカードをタップすると詳細と履歴が表示されます。';
+
+  @override
+  String get faqTip3 => '支払い画面をカレンダービューに切り替えると日付ごとに確認できます。';
+
+  @override
+  String get faqProProperties => '最大20件の物件';
+
+  @override
+  String get faqProNotifications => 'カスタム通知スケジュール';
+
+  @override
+  String get faqProRecurring => '定期的な経費';
 
   @override
   String get splashPhrases =>

@@ -2,8 +2,10 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../shared/widgets/pro_gate_sheet.dart';
 import '../../../data/database/app_database.dart';
 import '../../../features/dashboard/dashboard_providers.dart';
 import '../../../generated/app_localizations.dart';
@@ -17,6 +19,9 @@ final _expensesListProvider = StreamProvider<List<Expense>>((ref) {
   final db = ref.watch(databaseProvider);
   return (db.select(db.expenses)..orderBy([(t) => OrderingTerm.desc(t.date)])).watch();
 });
+
+final _customCategoriesProvider = StreamProvider((ref) =>
+    ref.watch(customCategoryRepositoryProvider).watchAll());
 
 class ExpensesScreen extends ConsumerWidget {
   const ExpensesScreen({super.key});
@@ -83,8 +88,10 @@ class _ExpenseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isKnown = ExpenseCategory.values.any((e) => e.value == expense.category);
     final category = ExpenseCategory.fromValue(expense.category);
-    final color = _categoryColor(category);
+    final color = isKnown ? _categoryColor(category) : const Color(0xFF8E8E93);
+    final categoryLabel = isKnown ? category.l10n(l10n) : expense.category;
 
     return Dismissible(
       key: ValueKey(expense.id),
@@ -130,10 +137,10 @@ class _ExpenseTile extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
-                        child: Text(category.l10n(l10n), style: theme.textTheme.labelSmall?.copyWith(color: color)),
+                        child: Text(categoryLabel, style: theme.textTheme.labelSmall?.copyWith(color: color)),
                       ),
                       const SizedBox(width: 8),
-                      Text(formatDate(expense.date), style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                      Text(formatDate(expense.date, locale: Localizations.localeOf(context).toString()), style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 ],
@@ -177,10 +184,12 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
   final _formKey = GlobalKey<FormState>();
   final _amount = TextEditingController();
   final _description = TextEditingController();
-  ExpenseCategory _category = ExpenseCategory.repair;
+  String _category = ExpenseCategory.repair.value;
   DateTime _date = DateTime.now();
   String? _propertyId;
   bool _saving = false;
+  bool _isRecurring = false;
+  int _recurringDay = 1;
 
   @override
   void dispose() {
@@ -190,6 +199,7 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     if (_propertyId == null) {
@@ -203,13 +213,53 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
               propertyId: Value(_propertyId!),
               amount: Value(double.parse(_amount.text)),
               date: Value(_date),
-              category: Value(_category.value),
+              category: Value(_category),
               description: Value(_description.text.trim()),
             ),
           );
+      if (_isRecurring) {
+        await ref.read(recurringExpenseRepositoryProvider).create(
+              RecurringExpensesCompanion(
+                propertyId: Value(_propertyId!),
+                amount: Value(double.parse(_amount.text)),
+                category: Value(_category),
+                description: Value(_description.text.trim()),
+                dayOfMonth: Value(_recurringDay),
+              ),
+            );
+      }
       if (mounted) Navigator.pop(context);
     } finally {
       if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _addCustomCategory(BuildContext context, AppLocalizations l10n) async {
+    if (!AppConstants.kDebugProUnlocked) {
+      showProGateSheet(context);
+      return;
+    }
+    final controller = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.customCategories),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(hintText: l10n.description),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(l10n.add)),
+        ],
+      ),
+    );
+    final name = controller.text.trim();
+    controller.dispose();
+    if (confirmed == true && name.isNotEmpty) {
+      await ref.read(customCategoryRepositoryProvider).create(name);
+      setState(() => _category = name);
     }
   }
 
@@ -218,6 +268,7 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final properties = ref.watch(propertiesProvider);
+    final customCategories = ref.watch(_customCategoriesProvider).valueOrNull ?? [];
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
@@ -241,12 +292,15 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   properties.when(
                     data: (list) => DropdownButtonFormField<String>(
-                      initialValue: _propertyId,
+                      // ignore: deprecated_member_use
+                      value: _propertyId,
                       decoration: InputDecoration(filled: true, labelText: l10n.propertiesTitle),
                       hint: Text(l10n.selectProperty),
+                      menuMaxHeight: 220,
                       items: list.map((p) => DropdownMenuItem(value: p.id, child: Text(p.name))).toList(),
                       onChanged: (v) => setState(() => _propertyId = v),
                     ),
@@ -254,7 +308,27 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
                     error: (e, _) => Text(e.toString()),
                   ),
                   const SizedBox(height: 12),
-                  _CategoryGrid(value: _category, onChanged: (c) => setState(() => _category = c), l10n: l10n),
+                  _CategoryGrid(
+                    value: _category,
+                    onChanged: (c) => setState(() => _category = c),
+                    customCategories: customCategories,
+                    onAddCustom: () => _addCustomCategory(context, l10n),
+                    l10n: l10n,
+                  ),
+                  const SizedBox(height: 12),
+                  _RecurringTile(
+                    isRecurring: _isRecurring,
+                    day: _recurringDay,
+                    l10n: l10n,
+                    onToggle: (v) {
+                      if (v && !AppConstants.kDebugProUnlocked) {
+                        showProGateSheet(context);
+                        return;
+                      }
+                      setState(() => _isRecurring = v);
+                    },
+                    onDayChanged: (d) => setState(() => _recurringDay = d),
+                  ),
                   const SizedBox(height: 12),
                   AppTextField(
                     label: l10n.description,
@@ -279,7 +353,7 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
                         child: AppTextField(
                           label: l10n.date,
                           readOnly: true,
-                          controller: TextEditingController(text: formatDate(_date)),
+                          controller: TextEditingController(text: formatDate(_date, locale: Localizations.localeOf(context).toString())),
                           suffix: const Icon(Icons.calendar_today_outlined),
                           onTap: () async {
                             final picked = await showDatePicker(
@@ -312,42 +386,149 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
 }
 
 class _CategoryGrid extends StatelessWidget {
-  final ExpenseCategory value;
-  final ValueChanged<ExpenseCategory> onChanged;
+  final String value;
+  final ValueChanged<String> onChanged;
+  final List<CustomCategory> customCategories;
+  final VoidCallback onAddCustom;
   final AppLocalizations l10n;
-  const _CategoryGrid({required this.value, required this.onChanged, required this.l10n});
+  const _CategoryGrid({required this.value, required this.onChanged, required this.customCategories, required this.onAddCustom, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    Widget chip(String val, String label) {
+      final selected = val == value;
+      return GestureDetector(
+        onTap: () => onChanged(val),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: selected ? theme.colorScheme.primary : theme.colorScheme.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: selected ? theme.colorScheme.primary : theme.colorScheme.outlineVariant),
+          ),
+          child: Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: selected ? Colors.white : theme.colorScheme.onSurface,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.normal,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: ExpenseCategory.values.map((cat) {
-        final selected = cat == value;
-        return GestureDetector(
-          onTap: () => onChanged(cat),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
+      children: [
+        ...ExpenseCategory.values.map((cat) => chip(cat.value, cat.l10n(l10n))),
+        for (final c in customCategories) chip(c.name, c.name),
+        GestureDetector(
+          onTap: onAddCustom,
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: selected ? theme.colorScheme.primary : theme.colorScheme.surfaceContainerLowest,
+              color: theme.colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: selected ? theme.colorScheme.primary : theme.colorScheme.outlineVariant),
+              border: Border.all(color: theme.colorScheme.outlineVariant, style: BorderStyle.solid),
             ),
-            child: Text(
-              cat.l10n(l10n),
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: selected ? Colors.white : theme.colorScheme.onSurface,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.normal,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add, size: 14, color: theme.colorScheme.primary),
+                const SizedBox(width: 4),
+                Text(l10n.customCategories, style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.primary)),
+                if (!AppConstants.kDebugProUnlocked) ...[
+                  const SizedBox(width: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4F6AF0),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text('PRO',
+                        style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800)),
+                  ),
+                ],
+              ],
             ),
           ),
-        );
-      }).toList(),
+        ),
+      ],
     );
   }
 }
+
+class _RecurringTile extends StatelessWidget {
+  final bool isRecurring;
+  final int day;
+  final AppLocalizations l10n;
+  final ValueChanged<bool> onToggle;
+  final ValueChanged<int> onDayChanged;
+  const _RecurringTile({required this.isRecurring, required this.day, required this.l10n, required this.onToggle, required this.onDayChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(Icons.repeat, size: 18, color: theme.colorScheme.onSurfaceVariant),
+              const SizedBox(width: 10),
+              Expanded(child: Text(l10n.repeatMonthly, style: theme.textTheme.bodyMedium)),
+              if (!AppConstants.kDebugProUnlocked)
+                Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4F6AF0),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text('PRO',
+                      style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800)),
+                ),
+              Switch(value: isRecurring, onChanged: onToggle),
+            ],
+          ),
+          if (isRecurring) ...[
+            Divider(height: 1, color: theme.colorScheme.outlineVariant),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                children: [
+                  Icon(Icons.calendar_month_outlined, size: 18, color: theme.colorScheme.onSurfaceVariant),
+                  const SizedBox(width: 10),
+                  Expanded(child: Text(l10n.paymentDay, style: theme.textTheme.bodyMedium)),
+                  DropdownButton<int>(
+                    value: day,
+                    underline: const SizedBox.shrink(),
+                    style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary),
+                    items: List.generate(28, (i) => i + 1)
+                        .map((d) => DropdownMenuItem(value: d, child: Text('$d')))
+                        .toList(),
+                    onChanged: (d) { if (d != null) onDayChanged(d); },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 
 class _EmptyState extends StatelessWidget {
   final AppLocalizations l10n;

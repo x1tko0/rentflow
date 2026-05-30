@@ -418,7 +418,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dataSection => 'Daten';
 
   @override
+  String get proSection => 'Pro-Funktionen';
+
+  @override
   String get backupToGoogleDrive => 'Google Drive-Backup';
+
+  @override
+  String get restorePurchases => 'Käufe wiederherstellen';
+
+  @override
+  String get restorePurchasesSuccess => 'Käufe wiederhergestellt';
 
   @override
   String get restoreFromBackup => 'Aus Backup wiederherstellen';
@@ -443,11 +452,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get backupFailed => 'Backup fehlgeschlagen';
 
   @override
-  String get dataRestored =>
-      'Daten wiederhergestellt. Bitte starten Sie die App neu.';
+  String get dataRestored => 'Daten erfolgreich wiederhergestellt';
 
   @override
   String get backupNotFound => 'Backup nicht gefunden';
+
+  @override
+  String get restartApp => 'Neu starten';
 
   @override
   String get theme => 'Thema';
@@ -466,16 +477,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get proDescription =>
-      'Bis zu 10 Objekte, PDF-Berichte und Cloud-Backup';
+      'Bis zu 20 Objekte, PDF-Berichte und Cloud-Backup';
 
   @override
-  String get proCta => 'Für 2,99 €/Monat testen';
+  String get proCta => 'Für 6,99 €/Monat testen';
 
   @override
   String get perMonth => '/Mo.';
 
   @override
-  String get proCtaYearly => 'oder 24,99 €/Jahr';
+  String get proCtaYearly => 'oder 59,99 €/Jahr';
 
   @override
   String get deleteExpenseTitle => 'Ausgabe löschen?';
@@ -493,6 +504,284 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get proFeatureMessage => 'In PRO-Version verfügbar';
+
+  @override
+  String get onboardingSkip => 'Überspringen';
+
+  @override
+  String get onboardingNext => 'Weiter';
+
+  @override
+  String get onboardingStart => 'Loslegen';
+
+  @override
+  String get onboarding1Title => 'Willkommen bei RentFlow';
+
+  @override
+  String get onboarding1Body => 'Einfache Mietverwaltung für private Vermieter';
+
+  @override
+  String get onboarding2Title => 'Objekte & Mieter';
+
+  @override
+  String get onboarding2Body =>
+      'Fügen Sie Objekte und Mieter in Sekunden hinzu';
+
+  @override
+  String get onboarding3Title => 'Zahlungen & Berichte';
+
+  @override
+  String get onboarding3Body =>
+      'Verfolgen Sie Einnahmen, Ausgaben und Rückstände in Echtzeit';
+
+  @override
+  String get notificationPaymentTitle => 'Zahlungserinnerung';
+
+  @override
+  String get notificationLeaseEndTitle => 'Mietvertrag läuft bald ab';
+
+  @override
+  String notificationLeaseEndBody(String name, String date) {
+    return '$name — Mietvertrag endet am $date';
+  }
+
+  @override
+  String get pdfReportTitlePrefix => 'Finanzbericht für';
+
+  @override
+  String get pdfSummary => 'Zusammenfassung';
+
+  @override
+  String get pdfByMonths => 'Nach Monaten';
+
+  @override
+  String get pdfNet => 'Netto';
+
+  @override
+  String get pdfTotal => 'Gesamt';
+
+  @override
+  String get pdfGeneratedBy => 'Erstellt in RentFlow';
+
+  @override
+  String get paymentHistory => 'Zahlungshistorie';
+
+  @override
+  String get totalPaid => 'Insgesamt bezahlt';
+
+  @override
+  String get thisMonth => 'Diesen Monat';
+
+  @override
+  String get allTime => 'Gesamt';
+
+  @override
+  String get search => 'Suche';
+
+  @override
+  String get searchHint => 'Nach Name oder Telefon suchen…';
+
+  @override
+  String get noResults => 'Keine Ergebnisse';
+
+  @override
+  String get propertyDetails => 'Objekt-Details';
+
+  @override
+  String get recurringExpenses => 'Wiederkehrende Ausgaben';
+
+  @override
+  String get repeatMonthly => 'Monatlich wiederholen';
+
+  @override
+  String get repeatDay => 'Tag des Monats';
+
+  @override
+  String get recurringExpenseHint =>
+      'Wird jeden Monat an diesem Tag automatisch erstellt';
+
+  @override
+  String get noRecurringExpenses => 'Keine wiederkehrenden Ausgaben';
+
+  @override
+  String get addRecurringExpense => 'Vorlage hinzufügen';
+
+  @override
+  String get proFeatureRecurring =>
+      'Wiederkehrende Ausgaben sind eine Pro-Funktion';
+
+  @override
+  String get customCategories => 'Eigene Kategorien';
+
+  @override
+  String get addCategory => 'Kategorie hinzufügen';
+
+  @override
+  String get categoryName => 'Kategoriename';
+
+  @override
+  String get yourCategories => 'Ihre Kategorien';
+
+  @override
+  String get proFeatureCategories => 'Eigene Kategorien sind eine Pro-Funktion';
+
+  @override
+  String get meterReadings => 'Zählerstandserfassung';
+
+  @override
+  String get addReading => 'Ablesung hinzufügen';
+
+  @override
+  String get lastReading => 'Letzte Ablesung';
+
+  @override
+  String get consumption => 'Verbrauch';
+
+  @override
+  String get noReadings => 'Noch keine Ablesungen';
+
+  @override
+  String get meterWaterCold => 'Kaltwasser';
+
+  @override
+  String get meterWaterHot => 'Warmwasser';
+
+  @override
+  String get meterGas => 'Gas';
+
+  @override
+  String get meterElectricity => 'Strom';
+
+  @override
+  String get meterHeat => 'Wärme';
+
+  @override
+  String get meterElectricityT1 => 'Strom T1 (Tag)';
+
+  @override
+  String get meterElectricityT2 => 'Strom T2 (Nacht)';
+
+  @override
+  String get meterElectricityT3 => 'Strom T3 (Abend)';
+
+  @override
+  String get meterHistory => 'Ableseverlauf';
+
+  @override
+  String get meterPdfTitle => 'Zählerstandsbericht';
+
+  @override
+  String get meterPdfPrevious => 'Vorheriger';
+
+  @override
+  String get meterPdfCurrent => 'Aktuell';
+
+  @override
+  String get meterPdfElecTotal => 'Strom (gesamt)';
+
+  @override
+  String get meterPdfTotalConsumption => 'Gesamtverbrauch';
+
+  @override
+  String get meterPdfGeneratedBy => 'Erstellt von RentFlow';
+
+  @override
+  String get customType => 'Benutzerdefiniert';
+
+  @override
+  String get editReading => 'Bearbeiten';
+
+  @override
+  String get typeName => 'Typname';
+
+  @override
+  String get selectPeriod => 'Zeitraum wählen';
+
+  @override
+  String get pdfPeriod => 'Zeitraum';
+
+  @override
+  String get readingValue => 'Zählerstand';
+
+  @override
+  String get notifyDaysBefore => 'Erinnerung vorher (Tage)';
+
+  @override
+  String get exportCsv => 'CSV exportieren';
+
+  @override
+  String get csvCopied => 'CSV in Zwischenablage kopiert';
+
+  @override
+  String get faqTitle => 'FAQ & Hilfe';
+
+  @override
+  String get faqHowToUseTab => 'Anleitung';
+
+  @override
+  String get faqProTab => 'PRO';
+
+  @override
+  String get faqGettingStarted => 'Erste Schritte';
+
+  @override
+  String get faqStep1Title => 'Objekt hinzufügen';
+
+  @override
+  String get faqStep1Body =>
+      'Gehen Sie zu «Objekte» → «+» und geben Sie Name, Adresse und Typ ein.';
+
+  @override
+  String get faqStep2Title => 'Mieter hinzufügen';
+
+  @override
+  String get faqStep2Body =>
+      'In «Mieter» → «+» Daten eingeben, Objekt auswählen, Miete und Zahlungstag festlegen.';
+
+  @override
+  String get faqStep3Title => 'Zahlungen erfassen';
+
+  @override
+  String get faqStep3Body =>
+      'In «Zahlungen» → «+» Zahlung hinzufügen. Nach rechts wischen, um als bezahlt zu markieren.';
+
+  @override
+  String get faqStep4Title => 'Ausgaben verfolgen';
+
+  @override
+  String get faqStep4Body =>
+      'In «Ausgaben» → «+» Kosten hinzufügen, Objekt zuordnen und Kategorie wählen.';
+
+  @override
+  String get faqStep5Title => 'Berichte anzeigen';
+
+  @override
+  String get faqStep5Body =>
+      '«Berichte» zeigt Jahreseinkommen, Ausgaben und Nettogewinn mit Diagramm und Monatstabelle.';
+
+  @override
+  String get faqTipsTitle => 'Tipps & Shortcuts';
+
+  @override
+  String get faqTip1 =>
+      'Nach rechts wischen, um eine Zahlung sofort als bezahlt zu markieren.';
+
+  @override
+  String get faqTip2 =>
+      'Auf eine Mieter- oder Objektkarte tippen, um Details und Verlauf anzuzeigen.';
+
+  @override
+  String get faqTip3 =>
+      'In «Zahlungen» zur Kalenderansicht wechseln, um Zahlungen nach Datum zu sehen.';
+
+  @override
+  String get faqProProperties => 'Bis zu 20 Objekte';
+
+  @override
+  String get faqProNotifications => 'Individuelle Benachrichtigungen';
+
+  @override
+  String get faqProRecurring => 'Wiederkehrende Ausgaben';
 
   @override
   String get splashPhrases =>

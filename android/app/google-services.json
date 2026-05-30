@@ -1,36 +1,35 @@
 {
   "project_info": {
-    "project_number": "640803242289",
-    "project_id": "rentflow-82634",
-    "storage_bucket": "rentflow-82634.firebasestorage.app"
+    "project_number": "715476778164",
+    "project_id": "rentflow-1920d",
+    "storage_bucket": "rentflow-1920d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:640803242289:android:2914d1e35a334c5af6f010",
+        "mobilesdk_app_id": "1:715476778164:android:95268b6c881498e5622be1",
         "android_client_info": {
-          "package_name": "com.rentflow.rentflow"
+          "package_name": "io.orbitray.rentflow"
         }
       },
       "oauth_client": [
         {
-          "client_id": "640803242289-i3ccrleud4b1l2eneutobsfafdvbpcr7.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "715476778164-tnt0lc845mqrh0nl58gqbrrbmp2vi5bi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.orbitray.rentflow",
+            "certificate_hash": "cc1f9e79296b6e260cf10a410f28b42353a0b540"
+          }
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAzoyQwczrJqQqZXcD8RGDNfd2ByBEzD3M"
+          "current_key": "AIzaSyAhu-TF84izVu9SYpPVDCmhwJDMQDJ-ZT0"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "640803242289-i3ccrleud4b1l2eneutobsfafdvbpcr7.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

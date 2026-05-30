@@ -17,6 +17,7 @@ import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
 import 'app_localizations_tr.dart';
 import 'app_localizations_uk.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -116,6 +117,7 @@ abstract class AppLocalizations {
     Locale('ru'),
     Locale('tr'),
     Locale('uk'),
+    Locale('zh'),
   ];
 
   /// No description provided for @appName.
@@ -904,11 +906,29 @@ abstract class AppLocalizations {
   /// **'Data'**
   String get dataSection;
 
+  /// No description provided for @proSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Features'**
+  String get proSection;
+
   /// No description provided for @backupToGoogleDrive.
   ///
   /// In en, this message translates to:
   /// **'Backup to Google Drive'**
   String get backupToGoogleDrive;
+
+  /// No description provided for @restorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get restorePurchases;
+
+  /// No description provided for @restorePurchasesSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases restored'**
+  String get restorePurchasesSuccess;
 
   /// No description provided for @restoreFromBackup.
   ///
@@ -955,7 +975,7 @@ abstract class AppLocalizations {
   /// No description provided for @dataRestored.
   ///
   /// In en, this message translates to:
-  /// **'Data restored. Please restart the app.'**
+  /// **'Backup restored successfully'**
   String get dataRestored;
 
   /// No description provided for @backupNotFound.
@@ -963,6 +983,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Backup not found'**
   String get backupNotFound;
+
+  /// No description provided for @restartApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get restartApp;
 
   /// No description provided for @theme.
   ///
@@ -997,13 +1023,13 @@ abstract class AppLocalizations {
   /// No description provided for @proDescription.
   ///
   /// In en, this message translates to:
-  /// **'Up to 10 properties, PDF reports and cloud backup'**
+  /// **'Up to 20 properties, PDF reports and cloud backup'**
   String get proDescription;
 
   /// No description provided for @proCta.
   ///
   /// In en, this message translates to:
-  /// **'Try for \$2.99/mo'**
+  /// **'Try for \$6.99/mo'**
   String get proCta;
 
   /// No description provided for @perMonth.
@@ -1015,7 +1041,7 @@ abstract class AppLocalizations {
   /// No description provided for @proCtaYearly.
   ///
   /// In en, this message translates to:
-  /// **'or \$24.99/year'**
+  /// **'or \$59.99/year'**
   String get proCtaYearly;
 
   /// No description provided for @deleteExpenseTitle.
@@ -1048,6 +1074,534 @@ abstract class AppLocalizations {
   /// **'Available in PRO version'**
   String get proFeatureMessage;
 
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingStart;
+
+  /// No description provided for @onboarding1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to RentFlow'**
+  String get onboarding1Title;
+
+  /// No description provided for @onboarding1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple rental management for private landlords'**
+  String get onboarding1Body;
+
+  /// No description provided for @onboarding2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Properties & Tenants'**
+  String get onboarding2Title;
+
+  /// No description provided for @onboarding2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your properties and tenants in seconds'**
+  String get onboarding2Body;
+
+  /// No description provided for @onboarding3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments & Reports'**
+  String get onboarding3Title;
+
+  /// No description provided for @onboarding3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Track income, expenses and overdue payments in real time'**
+  String get onboarding3Body;
+
+  /// No description provided for @notificationPaymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment reminder'**
+  String get notificationPaymentTitle;
+
+  /// No description provided for @notificationLeaseEndTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lease expiring soon'**
+  String get notificationLeaseEndTitle;
+
+  /// No description provided for @notificationLeaseEndBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} — lease ends {date}'**
+  String notificationLeaseEndBody(String name, String date);
+
+  /// No description provided for @pdfReportTitlePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Report for'**
+  String get pdfReportTitlePrefix;
+
+  /// No description provided for @pdfSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get pdfSummary;
+
+  /// No description provided for @pdfByMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'By months'**
+  String get pdfByMonths;
+
+  /// No description provided for @pdfNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get pdfNet;
+
+  /// No description provided for @pdfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get pdfTotal;
+
+  /// No description provided for @pdfGeneratedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated in RentFlow'**
+  String get pdfGeneratedBy;
+
+  /// No description provided for @paymentHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment history'**
+  String get paymentHistory;
+
+  /// No description provided for @totalPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Total paid'**
+  String get totalPaid;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get thisMonth;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get allTime;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or phone…'**
+  String get searchHint;
+
+  /// No description provided for @noResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResults;
+
+  /// No description provided for @propertyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Property details'**
+  String get propertyDetails;
+
+  /// No description provided for @recurringExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring expenses'**
+  String get recurringExpenses;
+
+  /// No description provided for @repeatMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat monthly'**
+  String get repeatMonthly;
+
+  /// No description provided for @repeatDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day of month'**
+  String get repeatDay;
+
+  /// No description provided for @recurringExpenseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-created every month on this day'**
+  String get recurringExpenseHint;
+
+  /// No description provided for @noRecurringExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No recurring expenses'**
+  String get noRecurringExpenses;
+
+  /// No description provided for @addRecurringExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Add template'**
+  String get addRecurringExpense;
+
+  /// No description provided for @proFeatureRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring expenses are a Pro feature'**
+  String get proFeatureRecurring;
+
+  /// No description provided for @customCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom categories'**
+  String get customCategories;
+
+  /// No description provided for @addCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get addCategory;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get categoryName;
+
+  /// No description provided for @yourCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Your categories'**
+  String get yourCategories;
+
+  /// No description provided for @proFeatureCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom categories are a Pro feature'**
+  String get proFeatureCategories;
+
+  /// No description provided for @meterReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'Meter readings'**
+  String get meterReadings;
+
+  /// No description provided for @addReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Add reading'**
+  String get addReading;
+
+  /// No description provided for @lastReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Last reading'**
+  String get lastReading;
+
+  /// No description provided for @consumption.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumption'**
+  String get consumption;
+
+  /// No description provided for @noReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'No readings yet'**
+  String get noReadings;
+
+  /// No description provided for @meterWaterCold.
+  ///
+  /// In en, this message translates to:
+  /// **'Cold water'**
+  String get meterWaterCold;
+
+  /// No description provided for @meterWaterHot.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot water'**
+  String get meterWaterHot;
+
+  /// No description provided for @meterGas.
+  ///
+  /// In en, this message translates to:
+  /// **'Gas'**
+  String get meterGas;
+
+  /// No description provided for @meterElectricity.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get meterElectricity;
+
+  /// No description provided for @meterHeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Heat'**
+  String get meterHeat;
+
+  /// No description provided for @meterElectricityT1.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity T1 (Day)'**
+  String get meterElectricityT1;
+
+  /// No description provided for @meterElectricityT2.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity T2 (Night)'**
+  String get meterElectricityT2;
+
+  /// No description provided for @meterElectricityT3.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity T3 (Evening)'**
+  String get meterElectricityT3;
+
+  /// No description provided for @meterHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading history'**
+  String get meterHistory;
+
+  /// No description provided for @meterPdfTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Meter Readings Report'**
+  String get meterPdfTitle;
+
+  /// No description provided for @meterPdfPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get meterPdfPrevious;
+
+  /// No description provided for @meterPdfCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get meterPdfCurrent;
+
+  /// No description provided for @meterPdfElecTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity (total)'**
+  String get meterPdfElecTotal;
+
+  /// No description provided for @meterPdfTotalConsumption.
+  ///
+  /// In en, this message translates to:
+  /// **'Total consumption'**
+  String get meterPdfTotalConsumption;
+
+  /// No description provided for @meterPdfGeneratedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated by RentFlow'**
+  String get meterPdfGeneratedBy;
+
+  /// No description provided for @customType.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom type'**
+  String get customType;
+
+  /// No description provided for @editReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit reading'**
+  String get editReading;
+
+  /// No description provided for @typeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Type name'**
+  String get typeName;
+
+  /// No description provided for @selectPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Select period'**
+  String get selectPeriod;
+
+  /// No description provided for @pdfPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get pdfPeriod;
+
+  /// No description provided for @readingValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Meter value'**
+  String get readingValue;
+
+  /// No description provided for @notifyDaysBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind before (days)'**
+  String get notifyDaysBefore;
+
+  /// No description provided for @exportCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get exportCsv;
+
+  /// No description provided for @csvCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV copied to clipboard'**
+  String get csvCopied;
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ & Help'**
+  String get faqTitle;
+
+  /// No description provided for @faqHowToUseTab.
+  ///
+  /// In en, this message translates to:
+  /// **'How to Use'**
+  String get faqHowToUseTab;
+
+  /// No description provided for @faqProTab.
+  ///
+  /// In en, this message translates to:
+  /// **'PRO'**
+  String get faqProTab;
+
+  /// No description provided for @faqGettingStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting Started'**
+  String get faqGettingStarted;
+
+  /// No description provided for @faqStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a Property'**
+  String get faqStep1Title;
+
+  /// No description provided for @faqStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap «Properties» → «+» to add a rental property: name, address, and type.'**
+  String get faqStep1Body;
+
+  /// No description provided for @faqStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a Tenant'**
+  String get faqStep2Title;
+
+  /// No description provided for @faqStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'In «Tenants» → «+» enter the details, pick a property, set monthly rent and payment day.'**
+  String get faqStep2Body;
+
+  /// No description provided for @faqStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Payments'**
+  String get faqStep3Title;
+
+  /// No description provided for @faqStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open «Payments» → «+» to log a payment. Swipe right on any row to mark it paid instantly.'**
+  String get faqStep3Body;
+
+  /// No description provided for @faqStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Expenses'**
+  String get faqStep4Title;
+
+  /// No description provided for @faqStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'In «Expenses» → «+» add a cost, link it to a property, and choose a category.'**
+  String get faqStep4Body;
+
+  /// No description provided for @faqStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'View Reports'**
+  String get faqStep5Title;
+
+  /// No description provided for @faqStep5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'«Reports» shows annual income, expenses, and net profit with a chart and monthly breakdown.'**
+  String get faqStep5Body;
+
+  /// No description provided for @faqTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips & Shortcuts'**
+  String get faqTipsTitle;
+
+  /// No description provided for @faqTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe right on a payment to mark it paid without opening the form.'**
+  String get faqTip1;
+
+  /// No description provided for @faqTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a tenant or property card to open full details and history.'**
+  String get faqTip2;
+
+  /// No description provided for @faqTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to calendar view in Payments to see all payments mapped by date.'**
+  String get faqTip3;
+
+  /// No description provided for @faqProProperties.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 20 properties'**
+  String get faqProProperties;
+
+  /// No description provided for @faqProNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom notification schedule'**
+  String get faqProNotifications;
+
+  /// No description provided for @faqProRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring expenses'**
+  String get faqProRecurring;
+
   /// No description provided for @splashPhrases.
   ///
   /// In en, this message translates to:
@@ -1078,6 +1632,7 @@ class _AppLocalizationsDelegate
     'ru',
     'tr',
     'uk',
+    'zh',
   ].contains(locale.languageCode);
 
   @override
@@ -1111,6 +1666,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsTr();
     case 'uk':
       return AppLocalizationsUk();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

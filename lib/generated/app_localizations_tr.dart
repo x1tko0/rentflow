@@ -416,7 +416,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dataSection => 'Veriler';
 
   @override
+  String get proSection => 'Pro Özellikleri';
+
+  @override
   String get backupToGoogleDrive => 'Google Drive\'a yedekle';
+
+  @override
+  String get restorePurchases => 'Satın alımları geri yükle';
+
+  @override
+  String get restorePurchasesSuccess => 'Satın alımlar geri yüklendi';
 
   @override
   String get restoreFromBackup => 'Yedekten geri yükle';
@@ -441,11 +450,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get backupFailed => 'Yedekleme başarısız';
 
   @override
-  String get dataRestored =>
-      'Veriler geri yüklendi. Lütfen uygulamayı yeniden başlatın.';
+  String get dataRestored => 'Veriler başarıyla geri yüklendi';
 
   @override
   String get backupNotFound => 'Yedek bulunamadı';
+
+  @override
+  String get restartApp => 'Yeniden başlat';
 
   @override
   String get theme => 'Tema';
@@ -464,16 +475,16 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get proDescription =>
-      '10\'a kadar mülk, PDF raporlar ve bulut yedekleme';
+      '20\'ye kadar mülk, PDF raporlar ve bulut yedekleme';
 
   @override
-  String get proCta => '2,99 \$/ay deneyebilirsin';
+  String get proCta => '6,99 \$/ay deneyebilirsin';
 
   @override
   String get perMonth => '/ay';
 
   @override
-  String get proCtaYearly => 'veya 24,99 \$/yıl';
+  String get proCtaYearly => 'veya 59,99 \$/yıl';
 
   @override
   String get deleteExpenseTitle => 'Gideri sil?';
@@ -491,6 +502,283 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get proFeatureMessage => 'PRO sürümde mevcut';
+
+  @override
+  String get onboardingSkip => 'Geç';
+
+  @override
+  String get onboardingNext => 'İleri';
+
+  @override
+  String get onboardingStart => 'Başla';
+
+  @override
+  String get onboarding1Title => 'RentFlow\'a Hoş Geldiniz';
+
+  @override
+  String get onboarding1Body =>
+      'Özel ev sahipleri için basit kiralama yönetimi';
+
+  @override
+  String get onboarding2Title => 'Mülkler & Kiracılar';
+
+  @override
+  String get onboarding2Body =>
+      'Mülklerinizi ve kiracılarınızı saniyeler içinde ekleyin';
+
+  @override
+  String get onboarding3Title => 'Ödemeler & Raporlar';
+
+  @override
+  String get onboarding3Body =>
+      'Gelir, gider ve gecikmiş ödemeleri gerçek zamanlı takip edin';
+
+  @override
+  String get notificationPaymentTitle => 'Ödeme hatırlatması';
+
+  @override
+  String get notificationLeaseEndTitle => 'Kira sözleşmesi bitiyor';
+
+  @override
+  String notificationLeaseEndBody(String name, String date) {
+    return '$name — kira $date tarihinde bitiyor';
+  }
+
+  @override
+  String get pdfReportTitlePrefix => 'Finansal Rapor';
+
+  @override
+  String get pdfSummary => 'Özet';
+
+  @override
+  String get pdfByMonths => 'Aylara göre';
+
+  @override
+  String get pdfNet => 'Net';
+
+  @override
+  String get pdfTotal => 'Toplam';
+
+  @override
+  String get pdfGeneratedBy => 'RentFlow ile oluşturuldu';
+
+  @override
+  String get paymentHistory => 'Ödeme geçmişi';
+
+  @override
+  String get totalPaid => 'Toplam ödenen';
+
+  @override
+  String get thisMonth => 'Bu ay';
+
+  @override
+  String get allTime => 'Tüm zamanlar';
+
+  @override
+  String get search => 'Ara';
+
+  @override
+  String get searchHint => 'İsim veya telefona göre ara…';
+
+  @override
+  String get noResults => 'Sonuç bulunamadı';
+
+  @override
+  String get propertyDetails => 'Mülk detayları';
+
+  @override
+  String get recurringExpenses => 'Tekrarlayan giderler';
+
+  @override
+  String get repeatMonthly => 'Aylık tekrarla';
+
+  @override
+  String get repeatDay => 'Ayın günü';
+
+  @override
+  String get recurringExpenseHint => 'Her ay bu günde otomatik oluşturulur';
+
+  @override
+  String get noRecurringExpenses => 'Tekrarlayan gider yok';
+
+  @override
+  String get addRecurringExpense => 'Şablon ekle';
+
+  @override
+  String get proFeatureRecurring => 'Tekrarlayan giderler Pro özelliğidir';
+
+  @override
+  String get customCategories => 'Özel kategoriler';
+
+  @override
+  String get addCategory => 'Kategori ekle';
+
+  @override
+  String get categoryName => 'Kategori adı';
+
+  @override
+  String get yourCategories => 'Kategorileriniz';
+
+  @override
+  String get proFeatureCategories => 'Özel kategoriler Pro özelliğidir';
+
+  @override
+  String get meterReadings => 'Sayaç okumaları';
+
+  @override
+  String get addReading => 'Okuma ekle';
+
+  @override
+  String get lastReading => 'Son okuma';
+
+  @override
+  String get consumption => 'Tüketim';
+
+  @override
+  String get noReadings => 'Henüz okuma yok';
+
+  @override
+  String get meterWaterCold => 'Soğuk su';
+
+  @override
+  String get meterWaterHot => 'Sıcak su';
+
+  @override
+  String get meterGas => 'Gaz';
+
+  @override
+  String get meterElectricity => 'Elektrik';
+
+  @override
+  String get meterHeat => 'Isıtma';
+
+  @override
+  String get meterElectricityT1 => 'Elektrik T1 (Gündüz)';
+
+  @override
+  String get meterElectricityT2 => 'Elektrik T2 (Gece)';
+
+  @override
+  String get meterElectricityT3 => 'Elektrik T3 (Akşam)';
+
+  @override
+  String get meterHistory => 'Okuma geçmişi';
+
+  @override
+  String get meterPdfTitle => 'Sayaç Okuma Raporu';
+
+  @override
+  String get meterPdfPrevious => 'Önceki';
+
+  @override
+  String get meterPdfCurrent => 'Mevcut';
+
+  @override
+  String get meterPdfElecTotal => 'Elektrik (toplam)';
+
+  @override
+  String get meterPdfTotalConsumption => 'Toplam tüketim';
+
+  @override
+  String get meterPdfGeneratedBy => 'RentFlow tarafından oluşturuldu';
+
+  @override
+  String get customType => 'Özel tür';
+
+  @override
+  String get editReading => 'Düzenle';
+
+  @override
+  String get typeName => 'Tür adı';
+
+  @override
+  String get selectPeriod => 'Dönem seç';
+
+  @override
+  String get pdfPeriod => 'Dönem';
+
+  @override
+  String get readingValue => 'Sayaç değeri';
+
+  @override
+  String get notifyDaysBefore => 'Hatırlatma önce (gün)';
+
+  @override
+  String get exportCsv => 'CSV dışa aktar';
+
+  @override
+  String get csvCopied => 'CSV panoya kopyalandı';
+
+  @override
+  String get faqTitle => 'SSS & Yardım';
+
+  @override
+  String get faqHowToUseTab => 'Nasıl kullanılır';
+
+  @override
+  String get faqProTab => 'PRO';
+
+  @override
+  String get faqGettingStarted => 'Başlarken';
+
+  @override
+  String get faqStep1Title => 'Mülk ekle';
+
+  @override
+  String get faqStep1Body =>
+      '«Mülkler» → «+» gidin ve ad, adres ve türü girin.';
+
+  @override
+  String get faqStep2Title => 'Kiracı ekle';
+
+  @override
+  String get faqStep2Body =>
+      '«Kiracılar» → «+» bölümünde bilgileri girin, mülkü seçin, kira ve ödeme gününü ayarlayın.';
+
+  @override
+  String get faqStep3Title => 'Ödemeleri kaydet';
+
+  @override
+  String get faqStep3Body =>
+      '«Ödemeler» → «+» ile ödeme ekleyin. Ödendi olarak işaretlemek için sağa kaydırın.';
+
+  @override
+  String get faqStep4Title => 'Giderleri takip et';
+
+  @override
+  String get faqStep4Body =>
+      '«Giderler» → «+» ile maliyet ekleyin, mülke bağlayın ve kategori seçin.';
+
+  @override
+  String get faqStep5Title => 'Raporları görüntüle';
+
+  @override
+  String get faqStep5Body =>
+      '«Raporlar» yıllık gelir, giderler ve net kârı grafik ve aylık tablo ile gösterir.';
+
+  @override
+  String get faqTipsTitle => 'İpuçları';
+
+  @override
+  String get faqTip1 =>
+      'Ödemeyi formu açmadan ödenmiş olarak işaretlemek için sağa kaydırın.';
+
+  @override
+  String get faqTip2 =>
+      'Detayları ve geçmişi görmek için kiracı veya mülk kartına dokunun.';
+
+  @override
+  String get faqTip3 =>
+      'Ödemeleri tarihe göre görmek için Ödemeler\'de takvim görünümüne geçin.';
+
+  @override
+  String get faqProProperties => '20 adede kadar mülk';
+
+  @override
+  String get faqProNotifications => 'Özel bildirim takvimi';
+
+  @override
+  String get faqProRecurring => 'Tekrarlayan giderler';
 
   @override
   String get splashPhrases =>

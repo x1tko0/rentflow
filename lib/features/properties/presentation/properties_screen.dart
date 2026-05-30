@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../data/database/app_database.dart';
@@ -8,44 +9,97 @@ import '../../../generated/app_localizations.dart';
 import '../../../shared/providers/repository_providers.dart';
 import '../../../features/settings/settings_provider.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
+import '../../../shared/widgets/pro_gate_sheet.dart';
+import 'property_detail_screen.dart';
 import 'property_form_screen.dart';
 
-class PropertiesScreen extends ConsumerWidget {
+class PropertiesScreen extends ConsumerStatefulWidget {
   const PropertiesScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PropertiesScreen> createState() => _PropertiesScreenState();
+}
+
+class _PropertiesScreenState extends ConsumerState<PropertiesScreen> {
+  bool _searchActive = false;
+  String _query = '';
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final properties = ref.watch(propertiesProvider);
     final currency = ref.watch(settingsProvider).currency;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.propertiesTitle)),
+      appBar: AppBar(
+        title: _searchActive
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: InputDecoration(hintText: l10n.search, border: InputBorder.none),
+                onChanged: (v) => setState(() => _query = v.toLowerCase()),
+              )
+            : Text(l10n.propertiesTitle),
+        actions: [
+          IconButton(
+            icon: Icon(_searchActive ? Icons.close : Icons.search),
+            onPressed: () => setState(() {
+              _searchActive = !_searchActive;
+              if (!_searchActive) { _query = ''; _searchController.clear(); }
+            }),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openForm(context, ref, null),
+        onPressed: () => _openForm(context, null),
         icon: const Icon(Icons.add),
         label: Text(l10n.add),
       ),
       body: properties.when(
-        data: (list) => list.isEmpty
-            ? _EmptyState(l10n: l10n)
-            : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                itemCount: list.length,
-                itemBuilder: (ctx, i) => _PropertyCard(
-                  property: list[i],
-                  currency: currency,
-                  onEdit: () => _openForm(context, ref, list[i]),
-                  onDelete: () => _delete(context, ref, list[i], l10n),
-                ),
-              ),
+        data: (list) {
+          final filtered = _query.isEmpty
+              ? list
+              : list.where((p) =>
+                  p.name.toLowerCase().contains(_query) ||
+                  p.address.toLowerCase().contains(_query)).toList();
+          if (filtered.isEmpty) {
+            return _query.isNotEmpty
+                ? Center(child: Text(l10n.noResults, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)))
+                : _EmptyState(l10n: l10n);
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+            itemCount: filtered.length,
+            itemBuilder: (ctx, i) => _PropertyCard(
+              property: filtered[i],
+              currency: currency,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PropertyDetailScreen(property: filtered[i]))),
+              onEdit: () => _openForm(context, filtered[i]),
+              onDelete: () => _delete(context, filtered[i], l10n),
+            ),
+          );
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
       ),
     );
   }
 
-  Future<void> _openForm(BuildContext context, WidgetRef ref, Property? property) async {
+  Future<void> _openForm(BuildContext context, Property? property) async {
+    if (property == null && !AppConstants.kDebugProUnlocked) {
+      final list = ref.read(propertiesProvider).valueOrNull ?? [];
+      if (list.length >= AppConstants.freePropertyLimit) {
+        if (context.mounted) showProGateSheet(context);
+        return;
+      }
+    }
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => PropertyFormScreen(property: property)),
@@ -53,7 +107,7 @@ class PropertiesScreen extends ConsumerWidget {
     if (result == true) ref.invalidate(propertiesProvider);
   }
 
-  Future<void> _delete(BuildContext context, WidgetRef ref, Property property, AppLocalizations l10n) async {
+  Future<void> _delete(BuildContext context, Property property, AppLocalizations l10n) async {
     final confirmed = await showConfirmDialog(
       context,
       title: l10n.deletePropertyTitle,
@@ -68,9 +122,10 @@ class PropertiesScreen extends ConsumerWidget {
 class _PropertyCard extends StatelessWidget {
   final Property property;
   final String currency;
+  final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  const _PropertyCard({required this.property, required this.currency, required this.onEdit, required this.onDelete});
+  const _PropertyCard({required this.property, required this.currency, required this.onTap, required this.onEdit, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +133,9 @@ class _PropertyCard extends StatelessWidget {
     final theme = Theme.of(context);
     final type = PropertyType.fromValue(property.type);
 
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLowest,
@@ -141,6 +198,7 @@ class _PropertyCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

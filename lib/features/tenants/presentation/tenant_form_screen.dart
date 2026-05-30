@@ -2,12 +2,14 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/services/notification_service.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../data/database/app_database.dart';
 import '../../../features/dashboard/dashboard_providers.dart';
+import '../../../features/settings/settings_provider.dart';
 import '../../../generated/app_localizations.dart';
 import '../../../shared/providers/repository_providers.dart';
 import '../../../shared/widgets/app_text_field.dart';
-import '../../../core/utils/formatters.dart';
 
 class TenantFormScreen extends ConsumerStatefulWidget {
   final Tenant? tenant;
@@ -74,12 +76,13 @@ class _TenantFormScreenState extends ConsumerState<TenantFormScreen> {
     );
     if (picked != null) {
       setState(() {
-        if (isStart) _leaseStart = picked; else _leaseEnd = picked;
+        if (isStart) { _leaseStart = picked; } else { _leaseEnd = picked; }
       });
     }
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     if (_propertyId == null) {
@@ -104,15 +107,61 @@ class _TenantFormScreenState extends ConsumerState<TenantFormScreen> {
     );
 
     try {
+      final String tenantId;
       if (_isEdit) {
         await repo.update(widget.tenant!.id, companion);
+        tenantId = widget.tenant!.id;
       } else {
-        await repo.create(companion);
+        tenantId = await repo.create(companion);
       }
-      if (mounted) Navigator.pop(context, true);
+      if (mounted) {
+        _scheduleNotification(tenantId)
+            .timeout(const Duration(seconds: 5))
+            .catchError((_) {});
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  Future<void> _scheduleNotification(String tenantId) async {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
+    final currency = ref.read(settingsProvider).currency;
+    final name = '${_firstName.text.trim()} ${_lastName.text.trim()}';
+    final amount = double.tryParse(_rent.text) ?? 0;
+    final notifId = tenantId.hashCode.abs() % 100000;
+    await NotificationService.cancel(notifId);
+    await NotificationService.schedulePaymentReminder(
+      id: notifId,
+      title: l10n.notificationPaymentTitle,
+      body: '$name — ${formatMoney(amount, currency: currency)}',
+      paymentDate: _nextPaymentDate(_paymentDay),
+      daysBefore: ref.read(settingsProvider).notificationDaysBefore,
+    );
+    await NotificationService.cancelLeaseReminder(notifId);
+    if (_leaseEnd != null) {
+      await NotificationService.scheduleLeaseEndReminder(
+        id: notifId,
+        title: l10n.notificationLeaseEndTitle,
+        body: l10n.notificationLeaseEndBody(
+          name,
+          formatDate(_leaseEnd!, locale: locale),
+        ),
+        leaseEnd: _leaseEnd!,
+      );
+    }
+  }
+
+  DateTime _nextPaymentDate(int day) {
+    final now = DateTime.now();
+    final thisMonth = DateTime(now.year, now.month, day);
+    return thisMonth.isAfter(now) ? thisMonth : DateTime(now.year, now.month + 1, day);
   }
 
   @override
@@ -219,8 +268,7 @@ class _TenantFormScreenState extends ConsumerState<TenantFormScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            _Section(l10n.notes),
-            AppTextField(label: l10n.notes, controller: _notes, maxLines: 3),
+            AppTextField(label: l10n.notes, hint: l10n.notesHint, controller: _notes, maxLines: 3),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _saving ? null : _save,
@@ -296,7 +344,7 @@ class _DateTile extends StatelessWidget {
             Text(label, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
             const SizedBox(height: 4),
             Text(
-              date != null ? formatDate(date!) : ph,
+              date != null ? formatDate(date!, locale: Localizations.localeOf(context).toString()) : ph,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: date != null ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant,
               ),

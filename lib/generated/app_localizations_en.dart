@@ -416,7 +416,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataSection => 'Data';
 
   @override
+  String get proSection => 'Pro Features';
+
+  @override
   String get backupToGoogleDrive => 'Backup to Google Drive';
+
+  @override
+  String get restorePurchases => 'Restore purchases';
+
+  @override
+  String get restorePurchasesSuccess => 'Purchases restored';
 
   @override
   String get restoreFromBackup => 'Restore from backup';
@@ -441,10 +450,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupFailed => 'Backup failed';
 
   @override
-  String get dataRestored => 'Data restored. Please restart the app.';
+  String get dataRestored => 'Backup restored successfully';
 
   @override
   String get backupNotFound => 'Backup not found';
+
+  @override
+  String get restartApp => 'Restart';
 
   @override
   String get theme => 'Theme';
@@ -463,16 +475,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proDescription =>
-      'Up to 10 properties, PDF reports and cloud backup';
+      'Up to 20 properties, PDF reports and cloud backup';
 
   @override
-  String get proCta => 'Try for \$2.99/mo';
+  String get proCta => 'Try for \$6.99/mo';
 
   @override
   String get perMonth => '/mo';
 
   @override
-  String get proCtaYearly => 'or \$24.99/year';
+  String get proCtaYearly => 'or \$59.99/year';
 
   @override
   String get deleteExpenseTitle => 'Delete expense?';
@@ -490,6 +502,282 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proFeatureMessage => 'Available in PRO version';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get onboarding1Title => 'Welcome to RentFlow';
+
+  @override
+  String get onboarding1Body =>
+      'Simple rental management for private landlords';
+
+  @override
+  String get onboarding2Title => 'Properties & Tenants';
+
+  @override
+  String get onboarding2Body => 'Add your properties and tenants in seconds';
+
+  @override
+  String get onboarding3Title => 'Payments & Reports';
+
+  @override
+  String get onboarding3Body =>
+      'Track income, expenses and overdue payments in real time';
+
+  @override
+  String get notificationPaymentTitle => 'Payment reminder';
+
+  @override
+  String get notificationLeaseEndTitle => 'Lease expiring soon';
+
+  @override
+  String notificationLeaseEndBody(String name, String date) {
+    return '$name — lease ends $date';
+  }
+
+  @override
+  String get pdfReportTitlePrefix => 'Financial Report for';
+
+  @override
+  String get pdfSummary => 'Summary';
+
+  @override
+  String get pdfByMonths => 'By months';
+
+  @override
+  String get pdfNet => 'Net';
+
+  @override
+  String get pdfTotal => 'Total';
+
+  @override
+  String get pdfGeneratedBy => 'Generated in RentFlow';
+
+  @override
+  String get paymentHistory => 'Payment history';
+
+  @override
+  String get totalPaid => 'Total paid';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get allTime => 'All time';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get searchHint => 'Search by name or phone…';
+
+  @override
+  String get noResults => 'No results found';
+
+  @override
+  String get propertyDetails => 'Property details';
+
+  @override
+  String get recurringExpenses => 'Recurring expenses';
+
+  @override
+  String get repeatMonthly => 'Repeat monthly';
+
+  @override
+  String get repeatDay => 'Day of month';
+
+  @override
+  String get recurringExpenseHint => 'Auto-created every month on this day';
+
+  @override
+  String get noRecurringExpenses => 'No recurring expenses';
+
+  @override
+  String get addRecurringExpense => 'Add template';
+
+  @override
+  String get proFeatureRecurring => 'Recurring expenses are a Pro feature';
+
+  @override
+  String get customCategories => 'Custom categories';
+
+  @override
+  String get addCategory => 'Add category';
+
+  @override
+  String get categoryName => 'Category name';
+
+  @override
+  String get yourCategories => 'Your categories';
+
+  @override
+  String get proFeatureCategories => 'Custom categories are a Pro feature';
+
+  @override
+  String get meterReadings => 'Meter readings';
+
+  @override
+  String get addReading => 'Add reading';
+
+  @override
+  String get lastReading => 'Last reading';
+
+  @override
+  String get consumption => 'Consumption';
+
+  @override
+  String get noReadings => 'No readings yet';
+
+  @override
+  String get meterWaterCold => 'Cold water';
+
+  @override
+  String get meterWaterHot => 'Hot water';
+
+  @override
+  String get meterGas => 'Gas';
+
+  @override
+  String get meterElectricity => 'Electricity';
+
+  @override
+  String get meterHeat => 'Heat';
+
+  @override
+  String get meterElectricityT1 => 'Electricity T1 (Day)';
+
+  @override
+  String get meterElectricityT2 => 'Electricity T2 (Night)';
+
+  @override
+  String get meterElectricityT3 => 'Electricity T3 (Evening)';
+
+  @override
+  String get meterHistory => 'Reading history';
+
+  @override
+  String get meterPdfTitle => 'Meter Readings Report';
+
+  @override
+  String get meterPdfPrevious => 'Previous';
+
+  @override
+  String get meterPdfCurrent => 'Current';
+
+  @override
+  String get meterPdfElecTotal => 'Electricity (total)';
+
+  @override
+  String get meterPdfTotalConsumption => 'Total consumption';
+
+  @override
+  String get meterPdfGeneratedBy => 'Generated by RentFlow';
+
+  @override
+  String get customType => 'Custom type';
+
+  @override
+  String get editReading => 'Edit reading';
+
+  @override
+  String get typeName => 'Type name';
+
+  @override
+  String get selectPeriod => 'Select period';
+
+  @override
+  String get pdfPeriod => 'Period';
+
+  @override
+  String get readingValue => 'Meter value';
+
+  @override
+  String get notifyDaysBefore => 'Remind before (days)';
+
+  @override
+  String get exportCsv => 'Export CSV';
+
+  @override
+  String get csvCopied => 'CSV copied to clipboard';
+
+  @override
+  String get faqTitle => 'FAQ & Help';
+
+  @override
+  String get faqHowToUseTab => 'How to Use';
+
+  @override
+  String get faqProTab => 'PRO';
+
+  @override
+  String get faqGettingStarted => 'Getting Started';
+
+  @override
+  String get faqStep1Title => 'Add a Property';
+
+  @override
+  String get faqStep1Body =>
+      'Tap «Properties» → «+» to add a rental property: name, address, and type.';
+
+  @override
+  String get faqStep2Title => 'Add a Tenant';
+
+  @override
+  String get faqStep2Body =>
+      'In «Tenants» → «+» enter the details, pick a property, set monthly rent and payment day.';
+
+  @override
+  String get faqStep3Title => 'Record Payments';
+
+  @override
+  String get faqStep3Body =>
+      'Open «Payments» → «+» to log a payment. Swipe right on any row to mark it paid instantly.';
+
+  @override
+  String get faqStep4Title => 'Track Expenses';
+
+  @override
+  String get faqStep4Body =>
+      'In «Expenses» → «+» add a cost, link it to a property, and choose a category.';
+
+  @override
+  String get faqStep5Title => 'View Reports';
+
+  @override
+  String get faqStep5Body =>
+      '«Reports» shows annual income, expenses, and net profit with a chart and monthly breakdown.';
+
+  @override
+  String get faqTipsTitle => 'Tips & Shortcuts';
+
+  @override
+  String get faqTip1 =>
+      'Swipe right on a payment to mark it paid without opening the form.';
+
+  @override
+  String get faqTip2 =>
+      'Tap a tenant or property card to open full details and history.';
+
+  @override
+  String get faqTip3 =>
+      'Switch to calendar view in Payments to see all payments mapped by date.';
+
+  @override
+  String get faqProProperties => 'Up to 20 properties';
+
+  @override
+  String get faqProNotifications => 'Custom notification schedule';
+
+  @override
+  String get faqProRecurring => 'Recurring expenses';
 
   @override
   String get splashPhrases =>

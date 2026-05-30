@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/services/biometric_service.dart';
 import '../features/settings/settings_provider.dart';
 import '../generated/app_localizations.dart';
+import '../main.dart' show skipBiometricOnce;
 
 class BiometricGate extends ConsumerStatefulWidget {
   final Widget child;
@@ -12,45 +13,28 @@ class BiometricGate extends ConsumerStatefulWidget {
   ConsumerState<BiometricGate> createState() => _BiometricGateState();
 }
 
-class _BiometricGateState extends ConsumerState<BiometricGate> with WidgetsBindingObserver {
+class _BiometricGateState extends ConsumerState<BiometricGate> {
   bool _locked = false;
   bool _checking = false;
-  bool _isInitialCheck = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkInitialLock());
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      final settings = ref.read(settingsProvider);
-      if (settings.biometricEnabled) setState(() => _locked = true);
-    }
-    if (state == AppLifecycleState.resumed && _locked && !_isInitialCheck) {
-      _authenticate();
-    }
   }
 
   Future<void> _checkInitialLock() async {
     if (!mounted) return;
+    if (skipBiometricOnce) {
+      skipBiometricOnce = false;
+      return;
+    }
     final settings = ref.read(settingsProvider);
     if (!settings.biometricEnabled) return;
     final available = await BiometricService.isAvailable();
     if (available && mounted) {
-      _isInitialCheck = true;
       setState(() => _locked = true);
       await _authenticate();
-      _isInitialCheck = false;
     }
   }
 

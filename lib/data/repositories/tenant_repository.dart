@@ -12,12 +12,15 @@ class TenantRepository {
   Stream<List<Tenant>> watchActive() =>
       (_db.select(_db.tenants)..where((t) => t.isActive.equals(true))).watch();
 
+  Stream<Tenant?> watchById(String id) =>
+      (_db.select(_db.tenants)..where((t) => t.id.equals(id))).watchSingleOrNull();
+
   Future<List<Tenant>> getAll() => _db.select(_db.tenants).get();
 
-  Future<void> create(TenantsCompanion data) async {
-    await _db.into(_db.tenants).insert(
-          data.copyWith(id: Value(const Uuid().v4())),
-        );
+  Future<String> create(TenantsCompanion data) async {
+    final id = const Uuid().v4();
+    await _db.into(_db.tenants).insert(data.copyWith(id: Value(id)));
+    return id;
   }
 
   Future<void> update(String id, TenantsCompanion data) async {

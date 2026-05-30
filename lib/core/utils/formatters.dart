@@ -5,11 +5,13 @@ String formatMoney(double amount, {String currency = '\$'}) {
   return '${f.format(amount)} $currency';
 }
 
-String formatDate(DateTime date) => DateFormat('d MMM yyyy', 'ru_RU').format(date);
+String formatDate(DateTime date, {String locale = 'ru_RU'}) =>
+    DateFormat('d MMM yyyy', locale).format(date);
 
-String formatMonth(DateTime date) => DateFormat('LLLL yyyy', 'ru_RU').format(date);
+String formatMonth(DateTime date, {String locale = 'ru_RU'}) =>
+    DateFormat('LLLL yyyy', locale).format(date);
 
-String monthLabel(int monthOffset) {
+String monthLabel(int monthOffset, {String locale = 'ru_RU'}) {
   final date = DateTime(DateTime.now().year, DateTime.now().month + monthOffset);
-  return DateFormat('MMM', 'ru_RU').format(date);
+  return DateFormat('MMM', locale).format(date);
 }

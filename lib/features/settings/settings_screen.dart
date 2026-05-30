@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
+import '../../main.dart' show restartApp, skipBiometricOnce;
+import '../../shared/widgets/pro_gate_sheet.dart';
+import '../../core/services/backup_service.dart';
 import '../../core/services/biometric_service.dart';
+import '../../core/services/notification_service.dart';
+import '../../core/utils/formatters.dart';
 import '../../generated/app_localizations.dart';
+import '../../shared/providers/repository_providers.dart';
+import '../faq/presentation/faq_screen.dart';
 import 'settings_provider.dart';
 
 class _CurrencyOption {
@@ -74,15 +81,45 @@ class SettingsScreen extends ConsumerWidget {
               icon: Icons.privacy_tip_outlined,
               onTap: () => _openPrivacyPolicy(context),
             ),
+            _Divider(),
+            _LinkTile(
+              label: l10n.faqTitle,
+              icon: Icons.help_outline,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const FaqScreen()),
+              ),
+            ),
           ]),
           const SizedBox(height: 20),
-          _ProSectionHeader(l10n.notificationsSection),
+          _SectionHeader(l10n.notificationsSection),
           _SettingsCard(children: [
-            _ProLockedTile(
-              label: l10n.enableNotifications,
-              icon: Icons.notifications_outlined,
+            _NotificationsToggleTile(
+              enabled: settings.notificationsEnabled,
+              onChanged: (v) => _toggleNotifications(context, ref, v, l10n, notifier),
               l10n: l10n,
             ),
+          ]),
+          const SizedBox(height: 20),
+          _ProSectionHeader(l10n.proSection),
+          _SettingsCard(children: [
+            _NotifyDaysTile(
+              days: settings.notificationDaysBefore,
+              enabled: settings.notificationsEnabled,
+              l10n: l10n,
+              onTap: () {
+                if (!AppConstants.kDebugProUnlocked) {
+                  showProGateSheet(context);
+                  return;
+                }
+                _showDaysPicker(context, ref, settings.notificationDaysBefore, l10n);
+              },
+            ),
+            _Divider(),
+            _BackupTile(l10n: l10n),
+            _Divider(),
+            _RestoreTile(l10n: l10n),
+            _Divider(),
+            _RestorePurchasesTile(l10n: l10n),
           ]),
           const SizedBox(height: 20),
           _SectionHeader(l10n.biometricSection),
@@ -92,13 +129,6 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (v) => _toggleBiometric(context, ref, v, l10n),
               l10n: l10n,
             ),
-          ]),
-          const SizedBox(height: 20),
-          _ProSectionHeader(l10n.dataSection),
-          _SettingsCard(children: [
-            _ProLockedTile(label: l10n.backupToGoogleDrive, icon: Icons.backup_outlined, l10n: l10n),
-            _Divider(),
-            _ProLockedTile(label: l10n.restoreFromBackup, icon: Icons.restore_outlined, l10n: l10n),
           ]),
         ],
       ),
@@ -121,6 +151,68 @@ class SettingsScreen extends ConsumerWidget {
         const SnackBar(content: Text('Cannot open email app')),
       );
     }
+  }
+
+  Future<void> _toggleNotifications(BuildContext context, WidgetRef ref, bool enable, AppLocalizations l10n, SettingsNotifier notifier) async {
+    await notifier.setNotificationsEnabled(enable);
+    if (!enable) {
+      await NotificationService.cancelAll();
+      return;
+    }
+    await NotificationService.requestPermission();
+    final days = ref.read(settingsProvider).notificationDaysBefore;
+    final currency = ref.read(settingsProvider).currency;
+    await _rescheduleAll(l10n, ref, days, currency);
+  }
+
+  static Future<void> _rescheduleAll(AppLocalizations l10n, WidgetRef ref, int days, String currency) async {
+    final tenants = await ref.read(tenantRepositoryProvider).getAll();
+    final now = DateTime.now();
+    for (final t in tenants) {
+      if (!t.isActive) continue;
+      final notifId = t.id.hashCode.abs() % 100000;
+      await NotificationService.cancel(notifId);
+      final thisMonth = DateTime(now.year, now.month, t.paymentDay);
+      final next = thisMonth.isAfter(now) ? thisMonth : DateTime(now.year, now.month + 1, t.paymentDay);
+      await NotificationService.schedulePaymentReminder(
+        id: notifId,
+        title: l10n.notificationPaymentTitle,
+        body: '${t.firstName} ${t.lastName} — ${formatMoney(t.rentAmount, currency: currency)}',
+        paymentDate: next,
+        daysBefore: days,
+      );
+    }
+  }
+
+  void _showDaysPicker(BuildContext context, WidgetRef ref, int current, AppLocalizations l10n) {
+    const options = [1, 2, 3, 5, 7, 10, 14];
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Text(l10n.notifyDaysBefore, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            for (final d in options)
+              ListTile(
+                title: Text('$d'),
+                trailing: current == d ? const Icon(Icons.check, color: Color(0xFF4F6AF0)) : null,
+                onTap: () async {
+                  Navigator.pop(context);
+                  await ref.read(settingsProvider.notifier).setNotificationDaysBefore(d);
+                  final s = ref.read(settingsProvider);
+                  if (s.notificationsEnabled) {
+                    await _rescheduleAll(l10n, ref, d, s.currency);
+                  }
+                },
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _toggleBiometric(BuildContext context, WidgetRef ref, bool enable, AppLocalizations l10n) async {
@@ -406,37 +498,249 @@ class _LinkTile extends StatelessWidget {
   }
 }
 
-class _ProLockedTile extends StatelessWidget {
-  final String label;
-  final IconData icon;
+class _NotificationsToggleTile extends StatelessWidget {
+  final bool enabled;
+  final ValueChanged<bool> onChanged;
   final AppLocalizations l10n;
-  const _ProLockedTile({required this.label, required this.icon, required this.l10n});
+  const _NotificationsToggleTile({required this.enabled, required this.onChanged, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Icon(Icons.notifications_outlined, color: theme.colorScheme.onSurfaceVariant, size: 22),
+          const SizedBox(width: 12),
+          Expanded(child: Text(l10n.enableNotifications, style: theme.textTheme.bodyMedium)),
+          Switch(value: enabled, onChanged: onChanged),
+        ],
+      ),
+    );
+  }
+}
+
+class _NotifyDaysTile extends StatelessWidget {
+  final int days;
+  final bool enabled;
+  final AppLocalizations l10n;
+  final VoidCallback onTap;
+  const _NotifyDaysTile({required this.days, required this.enabled, required this.l10n, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLocked = !AppConstants.kDebugProUnlocked;
+    final textColor = isLocked
+        ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
+        : theme.colorScheme.onSurface;
     return InkWell(
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.proFeatureMessage))),
+      onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, color: theme.colorScheme.onSurfaceVariant, size: 22),
+            Icon(Icons.alarm_outlined,
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: isLocked ? 0.4 : 1.0), size: 22),
             const SizedBox(width: 12),
-            Expanded(child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant))),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-              decoration: BoxDecoration(color: const Color(0xFF4F6AF0).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.lock, size: 11, color: Color(0xFF4F6AF0)),
-                  const SizedBox(width: 3),
-                  const Text('PRO', style: TextStyle(color: Color(0xFF4F6AF0), fontSize: 10, fontWeight: FontWeight.w800)),
-                ],
-              ),
-            ),
+            Expanded(child: Text(l10n.notifyDaysBefore,
+                style: theme.textTheme.bodyMedium?.copyWith(color: textColor))),
+            if (isLocked)
+              Icon(Icons.lock_outline, size: 16, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5))
+            else ...[
+              Text('$days', style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.primary, fontWeight: FontWeight.w600)),
+              const SizedBox(width: 4),
+              Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant, size: 20),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BackupTile extends StatefulWidget {
+  final AppLocalizations l10n;
+  const _BackupTile({required this.l10n});
+
+  @override
+  State<_BackupTile> createState() => _BackupTileState();
+}
+
+class _BackupTileState extends State<_BackupTile> {
+  bool _loading = false;
+
+  Future<void> _backup() async {
+    if (!AppConstants.kDebugProUnlocked) {
+      showProGateSheet(context);
+      return;
+    }
+    setState(() => _loading = true);
+    try {
+      await BackupService.uploadBackup();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(widget.l10n.backupSaved),
+      ));
+    } catch (e) {
+      if (!mounted) return;
+      final raw = e.toString();
+      if (raw.contains('sign_in_cancelled')) return;
+      final msg = raw.contains('db_file_not_found')
+          ? 'DB file not found'
+          : '${widget.l10n.backupFailed}: $raw';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), duration: const Duration(seconds: 6)));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLocked = !AppConstants.kDebugProUnlocked;
+    final textColor = isLocked
+        ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
+        : theme.colorScheme.onSurface;
+    return InkWell(
+      onTap: _loading ? null : _backup,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(Icons.backup_outlined,
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: isLocked ? 0.4 : 1.0), size: 22),
+            const SizedBox(width: 12),
+            Expanded(child: Text(widget.l10n.backupToGoogleDrive,
+                style: theme.textTheme.bodyMedium?.copyWith(color: textColor))),
+            if (_loading)
+              const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+            else if (isLocked)
+              Icon(Icons.lock_outline, size: 16, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5))
+            else
+              Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RestoreTile extends StatefulWidget {
+  final AppLocalizations l10n;
+  const _RestoreTile({required this.l10n});
+
+  @override
+  State<_RestoreTile> createState() => _RestoreTileState();
+}
+
+class _RestoreTileState extends State<_RestoreTile> {
+  bool _loading = false;
+
+  Future<void> _restore() async {
+    if (!AppConstants.kDebugProUnlocked) {
+      showProGateSheet(context);
+      return;
+    }
+    setState(() => _loading = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await BackupService.downloadBackup();
+      messenger.showSnackBar(SnackBar(
+        content: Text(widget.l10n.dataRestored),
+        duration: const Duration(seconds: 2),
+      ));
+      await Future.delayed(const Duration(milliseconds: 1500));
+      skipBiometricOnce = true;
+      restartApp();
+    } catch (e) {
+      if (!mounted) return;
+      final raw = e.toString();
+      final msg = raw.contains('backup_not_found')
+          ? widget.l10n.backupNotFound
+          : raw.contains('sign_in_cancelled')
+              ? 'Sign in cancelled'
+              : '${widget.l10n.backupFailed}: $raw';
+      messenger.showSnackBar(SnackBar(content: Text(msg), duration: const Duration(seconds: 6)));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLocked = !AppConstants.kDebugProUnlocked;
+    final textColor = isLocked
+        ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
+        : theme.colorScheme.onSurface;
+    return InkWell(
+      onTap: _loading ? null : _restore,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(Icons.restore_outlined,
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: isLocked ? 0.4 : 1.0), size: 22),
+            const SizedBox(width: 12),
+            Expanded(child: Text(widget.l10n.restoreFromBackup,
+                style: theme.textTheme.bodyMedium?.copyWith(color: textColor))),
+            if (_loading)
+              const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+            else if (isLocked)
+              Icon(Icons.lock_outline, size: 16, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5))
+            else
+              Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RestorePurchasesTile extends StatefulWidget {
+  final AppLocalizations l10n;
+  const _RestorePurchasesTile({required this.l10n});
+
+  @override
+  State<_RestorePurchasesTile> createState() => _RestorePurchasesTileState();
+}
+
+class _RestorePurchasesTileState extends State<_RestorePurchasesTile> {
+  bool _loading = false;
+
+  Future<void> _restore() async {
+    setState(() => _loading = true);
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+    setState(() => _loading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(widget.l10n.restorePurchasesSuccess)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: _loading ? null : _restore,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(Icons.receipt_long_outlined, color: theme.colorScheme.onSurfaceVariant, size: 22),
+            const SizedBox(width: 12),
+            Expanded(child: Text(widget.l10n.restorePurchases, style: theme.textTheme.bodyMedium)),
+            if (_loading)
+              const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+            else
+              Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant, size: 20),
           ],
         ),
       ),

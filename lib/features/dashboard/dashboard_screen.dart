@@ -89,7 +89,7 @@ class DashboardScreen extends ConsumerWidget {
                 overdue.when(
                   data: (list) => list.isEmpty
                       ? const SizedBox.shrink()
-                      : _OverdueSection(count: list.length, l10n: l10n),
+                      : _OverdueSection(count: list.length, l10n: l10n, onView: () => context.go('/payments')),
                   loading: () => const SizedBox.shrink(),
                   error: (e, _) => const SizedBox.shrink(),
                 ),
@@ -109,7 +109,7 @@ class _MonthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      formatMonth(date),
+      formatMonth(date, locale: Localizations.localeOf(context).toString()),
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
@@ -349,7 +349,7 @@ class _TenantTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final initials = '${tenant.firstName[0]}${tenant.lastName[0]}'.toUpperCase();
+    final initials = '${tenant.firstName.isNotEmpty ? tenant.firstName[0] : '?'}${tenant.lastName.isNotEmpty ? tenant.lastName[0] : ''}'.toUpperCase();
 
     return Material(
       color: Colors.transparent,
@@ -394,7 +394,8 @@ class _TenantTile extends StatelessWidget {
 class _OverdueSection extends StatelessWidget {
   final int count;
   final AppLocalizations l10n;
-  const _OverdueSection({required this.count, required this.l10n});
+  final VoidCallback onView;
+  const _OverdueSection({required this.count, required this.l10n, required this.onView});
 
   @override
   Widget build(BuildContext context) {
@@ -422,7 +423,7 @@ class _OverdueSection extends StatelessWidget {
               ],
             ),
           ),
-          TextButton(onPressed: () {}, child: Text(l10n.view)),
+          TextButton(onPressed: onView, child: Text(l10n.view)),
         ],
       ),
     );

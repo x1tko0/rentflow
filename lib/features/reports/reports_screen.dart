@@ -1,9 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/services/pdf_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../generated/app_localizations.dart';
+import '../../shared/widgets/pro_gate_sheet.dart';
 import '../settings/settings_provider.dart';
 import 'reports_providers.dart';
 
@@ -22,11 +25,38 @@ class ReportsScreen extends ConsumerWidget {
         title: Text(l10n.reportsTitle),
         actions: [
           report.whenOrNull(
-            data: (r) => _ProLockedIconButton(
-              icon: Icons.picture_as_pdf_outlined,
-              tooltip: l10n.exportPdf,
-              onProUnlocked: () => PdfService.exportYearReport(r, year),
-              l10n: l10n,
+            data: (r) => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ProLockedIconButton(
+                  icon: Icons.table_chart_outlined,
+                  tooltip: l10n.exportCsv,
+                  onProUnlocked: () => _exportCsv(context, r, l10n),
+                  l10n: l10n,
+                ),
+                _ProLockedIconButton(
+                  icon: Icons.picture_as_pdf_outlined,
+                  tooltip: l10n.exportPdf,
+                  onProUnlocked: () => PdfService.exportYearReport(
+                    r, year,
+                    labels: PdfLabels(
+                      reportTitle: '${l10n.pdfReportTitlePrefix} $year',
+                      summary: l10n.pdfSummary,
+                      income: l10n.income,
+                      expenses: l10n.expenses,
+                      netIncome: l10n.netIncome,
+                      byMonths: l10n.pdfByMonths,
+                      month: l10n.month,
+                      net: l10n.pdfNet,
+                      total: l10n.pdfTotal,
+                      generatedBy: l10n.pdfGeneratedBy,
+                    ),
+                    currency: currency,
+                    locale: Localizations.localeOf(context).toString(),
+                  ),
+                  l10n: l10n,
+                ),
+              ],
             ),
           ) ?? const SizedBox.shrink(),
           _YearSwitcher(year: year, ref: ref),
@@ -41,6 +71,22 @@ class ReportsScreen extends ConsumerWidget {
   }
 }
 
+Future<void> _exportCsv(BuildContext context, YearReport r, AppLocalizations l10n) async {
+  final months = l10n.chartMonthAbbr.split(',');
+  final buf = StringBuffer()
+    ..writeln('${l10n.month},${l10n.income},${l10n.expense},${l10n.net}');
+  for (int i = 0; i < 12; i++) {
+    final m = r.months[i];
+    if (m.income > 0 || m.expenses > 0) {
+      buf.writeln('${months[i]},${m.income.toStringAsFixed(2)},${m.expenses.toStringAsFixed(2)},${m.net.toStringAsFixed(2)}');
+    }
+  }
+  await Clipboard.setData(ClipboardData(text: buf.toString()));
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.csvCopied)));
+  }
+}
+
 class _ProLockedIconButton extends StatelessWidget {
   final IconData icon;
   final String tooltip;
@@ -50,13 +96,20 @@ class _ProLockedIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (AppConstants.kDebugProUnlocked) {
+      return IconButton(
+        icon: Icon(icon),
+        tooltip: tooltip,
+        onPressed: onProUnlocked,
+      );
+    }
     return Stack(
       alignment: Alignment.center,
       children: [
         IconButton(
           icon: Icon(icon),
           tooltip: tooltip,
-          onPressed: () => _showProDialog(context),
+          onPressed: () => showProGateSheet(context, onUnlocked: onProUnlocked),
         ),
         Positioned(
           top: 8,
@@ -71,12 +124,6 @@ class _ProLockedIconButton extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  void _showProDialog(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.proFeatureMessage)),
     );
   }
 }
@@ -441,7 +488,7 @@ class _MonthRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             children: [
-              Expanded(flex: 2, child: Text(formatMonth(stat.month), style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500))),
+              Expanded(flex: 2, child: Text(formatMonth(stat.month, locale: Localizations.localeOf(context).toString()), style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500))),
               Expanded(child: Text(formatMoney(stat.income, currency: currency), textAlign: TextAlign.right, style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF34C759), fontWeight: FontWeight.w600))),
               Expanded(child: Text(formatMoney(stat.expenses, currency: currency), textAlign: TextAlign.right, style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFFFF3B30), fontWeight: FontWeight.w600))),
               Expanded(child: Text(formatMoney(stat.net, currency: currency), textAlign: TextAlign.right, style: theme.textTheme.bodySmall?.copyWith(color: netColor, fontWeight: FontWeight.w700))),

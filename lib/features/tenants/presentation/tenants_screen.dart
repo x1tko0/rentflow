@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/services/notification_service.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../data/database/app_database.dart';
 import '../../../features/dashboard/dashboard_providers.dart';
@@ -7,44 +8,89 @@ import '../../../generated/app_localizations.dart';
 import '../../../shared/providers/repository_providers.dart';
 import '../../../features/settings/settings_provider.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
+import 'tenant_detail_screen.dart';
 import 'tenant_form_screen.dart';
 
-class TenantsScreen extends ConsumerWidget {
+class TenantsScreen extends ConsumerStatefulWidget {
   const TenantsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TenantsScreen> createState() => _TenantsScreenState();
+}
+
+class _TenantsScreenState extends ConsumerState<TenantsScreen> {
+  bool _searchActive = false;
+  String _query = '';
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final tenants = ref.watch(activeTenantsProvider);
     final currency = ref.watch(settingsProvider).currency;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tenantsTitle)),
+      appBar: AppBar(
+        title: _searchActive
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: InputDecoration(hintText: l10n.searchHint, border: InputBorder.none),
+                onChanged: (v) => setState(() => _query = v.toLowerCase()),
+              )
+            : Text(l10n.tenantsTitle),
+        actions: [
+          IconButton(
+            icon: Icon(_searchActive ? Icons.close : Icons.search),
+            onPressed: () => setState(() {
+              _searchActive = !_searchActive;
+              if (!_searchActive) { _query = ''; _searchController.clear(); }
+            }),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openForm(context, ref, null),
+        onPressed: () => _openForm(context, null),
         icon: const Icon(Icons.person_add_outlined),
         label: Text(l10n.add),
       ),
       body: tenants.when(
-        data: (list) => list.isEmpty
-            ? _EmptyState(l10n: l10n)
-            : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                itemCount: list.length,
-                itemBuilder: (ctx, i) => _TenantCard(
-                  tenant: list[i],
-                  currency: currency,
-                  onEdit: () => _openForm(context, ref, list[i]),
-                  onDelete: () => _delete(context, ref, list[i], l10n),
-                ),
-              ),
+        data: (list) {
+          final filtered = _query.isEmpty
+              ? list
+              : list.where((t) =>
+                  '${t.firstName} ${t.lastName}'.toLowerCase().contains(_query) ||
+                  t.phone.toLowerCase().contains(_query)).toList();
+          if (filtered.isEmpty) {
+            return _query.isNotEmpty
+                ? Center(child: Text(l10n.noResults, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)))
+                : _EmptyState(l10n: l10n);
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+            itemCount: filtered.length,
+            itemBuilder: (ctx, i) => _TenantCard(
+              tenant: filtered[i],
+              currency: currency,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TenantDetailScreen(tenant: filtered[i]))),
+              onEdit: () => _openForm(context, filtered[i]),
+              onDelete: () => _delete(context, filtered[i], l10n),
+            ),
+          );
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
       ),
     );
   }
 
-  Future<void> _openForm(BuildContext context, WidgetRef ref, Tenant? tenant) async {
+  Future<void> _openForm(BuildContext context, Tenant? tenant) async {
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => TenantFormScreen(tenant: tenant)),
@@ -52,14 +98,23 @@ class TenantsScreen extends ConsumerWidget {
     if (result == true) ref.invalidate(activeTenantsProvider);
   }
 
-  Future<void> _delete(BuildContext context, WidgetRef ref, Tenant tenant, AppLocalizations l10n) async {
+  Future<void> _delete(BuildContext context, Tenant tenant, AppLocalizations l10n) async {
+    final messenger = ScaffoldMessenger.of(context);
     final confirmed = await showConfirmDialog(
       context,
       title: l10n.deleteTenantTitle,
       message: l10n.deleteTenantMessage('${tenant.firstName} ${tenant.lastName}'),
     );
-    if (confirmed) {
+    if (!confirmed) return;
+    final notifId = tenant.id.hashCode.abs() % 100000;
+    try {
+      await NotificationService.cancel(notifId);
+      await NotificationService.cancelLeaseReminder(notifId);
+    } catch (_) {}
+    try {
       await ref.read(tenantRepositoryProvider).delete(tenant.id);
+    } catch (e) {
+      if (mounted) messenger.showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 }
@@ -67,18 +122,21 @@ class TenantsScreen extends ConsumerWidget {
 class _TenantCard extends StatelessWidget {
   final Tenant tenant;
   final String currency;
+  final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  const _TenantCard({required this.tenant, required this.currency, required this.onEdit, required this.onDelete});
+  const _TenantCard({required this.tenant, required this.currency, required this.onTap, required this.onEdit, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final initials = '${tenant.firstName[0]}${tenant.lastName[0]}'.toUpperCase();
+    final initials = '${tenant.firstName.isNotEmpty ? tenant.firstName[0] : '?'}${tenant.lastName.isNotEmpty ? tenant.lastName[0] : ''}'.toUpperCase();
     final daysLeft = tenant.leaseEnd?.difference(DateTime.now()).inDays;
 
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLowest,
@@ -142,6 +200,7 @@ class _TenantCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

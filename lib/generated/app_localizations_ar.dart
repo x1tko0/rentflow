@@ -416,7 +416,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dataSection => 'البيانات';
 
   @override
+  String get proSection => 'ميزات Pro';
+
+  @override
   String get backupToGoogleDrive => 'نسخ احتياطي على Google Drive';
+
+  @override
+  String get restorePurchases => 'استعادة المشتريات';
+
+  @override
+  String get restorePurchasesSuccess => 'تمت استعادة المشتريات';
 
   @override
   String get restoreFromBackup => 'الاستعادة من النسخة الاحتياطية';
@@ -441,10 +450,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupFailed => 'فشل النسخ الاحتياطي';
 
   @override
-  String get dataRestored => 'تمت استعادة البيانات. يرجى إعادة تشغيل التطبيق.';
+  String get dataRestored => 'تمت استعادة البيانات بنجاح';
 
   @override
   String get backupNotFound => 'النسخة الاحتياطية غير موجودة';
+
+  @override
+  String get restartApp => 'إعادة التشغيل';
 
   @override
   String get theme => 'النمط';
@@ -462,16 +474,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currency => 'العملة';
 
   @override
-  String get proDescription => 'حتى 10 عقارات وتقارير PDF ونسخ احتياطي سحابي';
+  String get proDescription => 'حتى 20 عقارات وتقارير PDF ونسخ احتياطي سحابي';
 
   @override
-  String get proCta => 'جرب مقابل 2.99\$/شهر';
+  String get proCta => 'جرب مقابل 6.99\$/شهر';
 
   @override
   String get perMonth => '/شهر';
 
   @override
-  String get proCtaYearly => 'أو 24.99\$/سنة';
+  String get proCtaYearly => 'أو 59.99\$/سنة';
 
   @override
   String get deleteExpenseTitle => 'حذف المصروف؟';
@@ -489,6 +501,280 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get proFeatureMessage => 'متاح في النسخة PRO';
+
+  @override
+  String get onboardingSkip => 'تخطي';
+
+  @override
+  String get onboardingNext => 'التالي';
+
+  @override
+  String get onboardingStart => 'ابدأ';
+
+  @override
+  String get onboarding1Title => 'مرحباً بك في RentFlow';
+
+  @override
+  String get onboarding1Body => 'إدارة بسيطة للإيجار للملاك الخاصين';
+
+  @override
+  String get onboarding2Title => 'العقارات والمستأجرون';
+
+  @override
+  String get onboarding2Body => 'أضف عقاراتك ومستأجريك في ثوانٍ';
+
+  @override
+  String get onboarding3Title => 'المدفوعات والتقارير';
+
+  @override
+  String get onboarding3Body =>
+      'تتبع الدخل والمصروفات والمدفوعات المتأخرة في الوقت الفعلي';
+
+  @override
+  String get notificationPaymentTitle => 'تذكير بالدفع';
+
+  @override
+  String get notificationLeaseEndTitle => 'عقد الإيجار على وشك الانتهاء';
+
+  @override
+  String notificationLeaseEndBody(String name, String date) {
+    return '$name — ينتهي العقد في $date';
+  }
+
+  @override
+  String get pdfReportTitlePrefix => 'التقرير المالي لعام';
+
+  @override
+  String get pdfSummary => 'ملخص';
+
+  @override
+  String get pdfByMonths => 'حسب الشهر';
+
+  @override
+  String get pdfNet => 'صافي';
+
+  @override
+  String get pdfTotal => 'الإجمالي';
+
+  @override
+  String get pdfGeneratedBy => 'تم إنشاؤه في RentFlow';
+
+  @override
+  String get paymentHistory => 'سجل المدفوعات';
+
+  @override
+  String get totalPaid => 'إجمالي المدفوع';
+
+  @override
+  String get thisMonth => 'هذا الشهر';
+
+  @override
+  String get allTime => 'كل الوقت';
+
+  @override
+  String get search => 'بحث';
+
+  @override
+  String get searchHint => 'البحث بالاسم أو الهاتف…';
+
+  @override
+  String get noResults => 'لا توجد نتائج';
+
+  @override
+  String get propertyDetails => 'تفاصيل العقار';
+
+  @override
+  String get recurringExpenses => 'المصروفات المتكررة';
+
+  @override
+  String get repeatMonthly => 'تكرار شهري';
+
+  @override
+  String get repeatDay => 'يوم من الشهر';
+
+  @override
+  String get recurringExpenseHint => 'يُنشأ تلقائيًا كل شهر في هذا اليوم';
+
+  @override
+  String get noRecurringExpenses => 'لا توجد مصروفات متكررة';
+
+  @override
+  String get addRecurringExpense => 'إضافة قالب';
+
+  @override
+  String get proFeatureRecurring => 'المصروفات المتكررة ميزة Pro';
+
+  @override
+  String get customCategories => 'فئات مخصصة';
+
+  @override
+  String get addCategory => 'إضافة فئة';
+
+  @override
+  String get categoryName => 'اسم الفئة';
+
+  @override
+  String get yourCategories => 'فئاتك';
+
+  @override
+  String get proFeatureCategories => 'الفئات المخصصة ميزة Pro';
+
+  @override
+  String get meterReadings => 'قراءات العدادات';
+
+  @override
+  String get addReading => 'إضافة قراءة';
+
+  @override
+  String get lastReading => 'آخر قراءة';
+
+  @override
+  String get consumption => 'الاستهلاك';
+
+  @override
+  String get noReadings => 'لا توجد قراءات بعد';
+
+  @override
+  String get meterWaterCold => 'ماء بارد';
+
+  @override
+  String get meterWaterHot => 'ماء ساخن';
+
+  @override
+  String get meterGas => 'الغاز';
+
+  @override
+  String get meterElectricity => 'الكهرباء';
+
+  @override
+  String get meterHeat => 'التدفئة';
+
+  @override
+  String get meterElectricityT1 => 'الكهرباء T1 (نهار)';
+
+  @override
+  String get meterElectricityT2 => 'الكهرباء T2 (ليل)';
+
+  @override
+  String get meterElectricityT3 => 'كهرباء T3 (مساء)';
+
+  @override
+  String get meterHistory => 'سجل القراءات';
+
+  @override
+  String get meterPdfTitle => 'تقرير قراءات العداد';
+
+  @override
+  String get meterPdfPrevious => 'السابق';
+
+  @override
+  String get meterPdfCurrent => 'الحالي';
+
+  @override
+  String get meterPdfElecTotal => 'الكهرباء (إجمالي)';
+
+  @override
+  String get meterPdfTotalConsumption => 'إجمالي الاستهلاك';
+
+  @override
+  String get meterPdfGeneratedBy => 'تم إنشاؤه بواسطة RentFlow';
+
+  @override
+  String get customType => 'نوع مخصص';
+
+  @override
+  String get editReading => 'تعديل';
+
+  @override
+  String get typeName => 'اسم النوع';
+
+  @override
+  String get selectPeriod => 'اختر الفترة';
+
+  @override
+  String get pdfPeriod => 'الفترة';
+
+  @override
+  String get readingValue => 'قيمة العداد';
+
+  @override
+  String get notifyDaysBefore => 'تذكير قبل (أيام)';
+
+  @override
+  String get exportCsv => 'تصدير CSV';
+
+  @override
+  String get csvCopied => 'تم نسخ CSV إلى الحافظة';
+
+  @override
+  String get faqTitle => 'المساعدة';
+
+  @override
+  String get faqHowToUseTab => 'كيفية الاستخدام';
+
+  @override
+  String get faqProTab => 'PRO';
+
+  @override
+  String get faqGettingStarted => 'البداية';
+
+  @override
+  String get faqStep1Title => 'أضف عقاراً';
+
+  @override
+  String get faqStep1Body =>
+      'اذهب إلى «العقارات» ← «+» وأدخل الاسم والعنوان والنوع.';
+
+  @override
+  String get faqStep2Title => 'أضف مستأجراً';
+
+  @override
+  String get faqStep2Body =>
+      'في «المستأجرون» ← «+» أدخل البيانات واختر العقار وحدد الإيجار ويوم الدفع.';
+
+  @override
+  String get faqStep3Title => 'سجّل المدفوعات';
+
+  @override
+  String get faqStep3Body =>
+      'في «المدفوعات» ← «+» أضف دفعة. اسحب لليمين لوضع علامة مدفوع فوراً.';
+
+  @override
+  String get faqStep4Title => 'تتبع المصروفات';
+
+  @override
+  String get faqStep4Body =>
+      'في «المصروفات» ← «+» أضف تكلفة واربطها بعقار واختر الفئة.';
+
+  @override
+  String get faqStep5Title => 'اعرض التقارير';
+
+  @override
+  String get faqStep5Body =>
+      '«التقارير» تعرض الدخل السنوي والمصروفات وصافي الربح بمخطط وجدول شهري.';
+
+  @override
+  String get faqTipsTitle => 'نصائح';
+
+  @override
+  String get faqTip1 => 'اسحب الدفعة يميناً لوضع علامة مدفوع دون فتح النموذج.';
+
+  @override
+  String get faqTip2 =>
+      'انقر على بطاقة المستأجر أو العقار لرؤية التفاصيل والتاريخ.';
+
+  @override
+  String get faqTip3 =>
+      'انتقل إلى عرض التقويم في المدفوعات لرؤية الدفعات حسب التاريخ.';
+
+  @override
+  String get faqProProperties => 'حتى 20 عقارات';
+
+  @override
+  String get faqProNotifications => 'جدول إشعارات مخصص';
+
+  @override
+  String get faqProRecurring => 'المصاريف المتكررة';
 
   @override
   String get splashPhrases =>

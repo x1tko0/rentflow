@@ -1,4 +1,4 @@
-package com.rentflow.rentflow
+package io.orbitray.rentflow
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

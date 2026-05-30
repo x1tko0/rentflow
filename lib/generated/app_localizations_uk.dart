@@ -416,7 +416,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get dataSection => 'Дані';
 
   @override
+  String get proSection => 'Pro-функції';
+
+  @override
   String get backupToGoogleDrive => 'Резервна копія в Google Drive';
+
+  @override
+  String get restorePurchases => 'Відновити покупки';
+
+  @override
+  String get restorePurchasesSuccess => 'Покупки відновлено';
 
   @override
   String get restoreFromBackup => 'Відновити з резервної копії';
@@ -441,11 +450,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get backupFailed => 'Помилка при створенні резервної копії';
 
   @override
-  String get dataRestored =>
-      'Дані відновлено. Будь ласка, перезапустіть застосунок.';
+  String get dataRestored => 'Дані успішно відновлено';
 
   @override
   String get backupNotFound => 'Резервну копію не знайдено';
+
+  @override
+  String get restartApp => 'Перезапустити';
 
   @override
   String get theme => 'Тема';
@@ -463,16 +474,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get currency => 'Валюта';
 
   @override
-  String get proDescription => 'До 10 об\'єктів, PDF-звіти та хмарний бекап';
+  String get proDescription => 'До 20 об\'єктів, PDF-звіти та хмарний бекап';
 
   @override
-  String get proCta => 'Спробувати за 2.99\$/міс';
+  String get proCta => 'Спробувати за 6.99\$/міс';
 
   @override
   String get perMonth => '/міс';
 
   @override
-  String get proCtaYearly => 'або \$24.99/рік';
+  String get proCtaYearly => 'або \$59.99/рік';
 
   @override
   String get deleteExpenseTitle => 'Видалити витрату?';
@@ -490,6 +501,284 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get proFeatureMessage => 'Доступно в PRO-версії';
+
+  @override
+  String get onboardingSkip => 'Пропустити';
+
+  @override
+  String get onboardingNext => 'Далі';
+
+  @override
+  String get onboardingStart => 'Почати';
+
+  @override
+  String get onboarding1Title => 'Ласкаво просимо до RentFlow';
+
+  @override
+  String get onboarding1Body =>
+      'Просте управління орендою для приватних орендодавців';
+
+  @override
+  String get onboarding2Title => 'Об\'єкти та орендарі';
+
+  @override
+  String get onboarding2Body =>
+      'Додавайте об\'єкти та орендарів за лічені секунди';
+
+  @override
+  String get onboarding3Title => 'Платежі та звіти';
+
+  @override
+  String get onboarding3Body =>
+      'Відстежуйте доходи, витрати та прострочення в реальному часі';
+
+  @override
+  String get notificationPaymentTitle => 'Нагадування про оплату';
+
+  @override
+  String get notificationLeaseEndTitle => 'Оренда закінчується';
+
+  @override
+  String notificationLeaseEndBody(String name, String date) {
+    return '$name — оренда закінчується $date';
+  }
+
+  @override
+  String get pdfReportTitlePrefix => 'Фінансовий звіт за';
+
+  @override
+  String get pdfSummary => 'Зведення';
+
+  @override
+  String get pdfByMonths => 'По місяцях';
+
+  @override
+  String get pdfNet => 'Чистий';
+
+  @override
+  String get pdfTotal => 'Разом';
+
+  @override
+  String get pdfGeneratedBy => 'Сформовано в RentFlow';
+
+  @override
+  String get paymentHistory => 'Історія платежів';
+
+  @override
+  String get totalPaid => 'Всього оплачено';
+
+  @override
+  String get thisMonth => 'Цей місяць';
+
+  @override
+  String get allTime => 'За весь час';
+
+  @override
+  String get search => 'Пошук';
+
+  @override
+  String get searchHint => 'Пошук за іменем або телефоном…';
+
+  @override
+  String get noResults => 'Нічого не знайдено';
+
+  @override
+  String get propertyDetails => 'Деталі об\'єкта';
+
+  @override
+  String get recurringExpenses => 'Повторювані витрати';
+
+  @override
+  String get repeatMonthly => 'Повторювати щомісяця';
+
+  @override
+  String get repeatDay => 'День місяця';
+
+  @override
+  String get recurringExpenseHint =>
+      'Створюється автоматично кожного місяця в цей день';
+
+  @override
+  String get noRecurringExpenses => 'Немає повторюваних витрат';
+
+  @override
+  String get addRecurringExpense => 'Додати шаблон';
+
+  @override
+  String get proFeatureRecurring => 'Повторювані витрати — функція Pro';
+
+  @override
+  String get customCategories => 'Власні категорії';
+
+  @override
+  String get addCategory => 'Додати категорію';
+
+  @override
+  String get categoryName => 'Назва категорії';
+
+  @override
+  String get yourCategories => 'Ваші категорії';
+
+  @override
+  String get proFeatureCategories => 'Власні категорії — функція Pro';
+
+  @override
+  String get meterReadings => 'Показники лічильників';
+
+  @override
+  String get addReading => 'Додати показник';
+
+  @override
+  String get lastReading => 'Останній показник';
+
+  @override
+  String get consumption => 'Витрата';
+
+  @override
+  String get noReadings => 'Показників поки немає';
+
+  @override
+  String get meterWaterCold => 'Холодна вода';
+
+  @override
+  String get meterWaterHot => 'Гаряча вода';
+
+  @override
+  String get meterGas => 'Газ';
+
+  @override
+  String get meterElectricity => 'Електрика';
+
+  @override
+  String get meterHeat => 'Тепло';
+
+  @override
+  String get meterElectricityT1 => 'Електрика Т1 (День)';
+
+  @override
+  String get meterElectricityT2 => 'Електрика Т2 (Ніч)';
+
+  @override
+  String get meterElectricityT3 => 'Електрика Т3 (Вечір)';
+
+  @override
+  String get meterHistory => 'Історія показань';
+
+  @override
+  String get meterPdfTitle => 'Звіт показань лічильників';
+
+  @override
+  String get meterPdfPrevious => 'Попереднє';
+
+  @override
+  String get meterPdfCurrent => 'Поточне';
+
+  @override
+  String get meterPdfElecTotal => 'Електрика (загальне)';
+
+  @override
+  String get meterPdfTotalConsumption => 'Загальний розхід';
+
+  @override
+  String get meterPdfGeneratedBy => 'Сформовано RentFlow';
+
+  @override
+  String get customType => 'Власний тип';
+
+  @override
+  String get editReading => 'Редагувати';
+
+  @override
+  String get typeName => 'Назва типу';
+
+  @override
+  String get selectPeriod => 'Оберіть період';
+
+  @override
+  String get pdfPeriod => 'Період';
+
+  @override
+  String get readingValue => 'Показник лічильника';
+
+  @override
+  String get notifyDaysBefore => 'Нагадати за (днів)';
+
+  @override
+  String get exportCsv => 'Експорт CSV';
+
+  @override
+  String get csvCopied => 'CSV скопійовано в буфер';
+
+  @override
+  String get faqTitle => 'Довідка';
+
+  @override
+  String get faqHowToUseTab => 'Як користуватися';
+
+  @override
+  String get faqProTab => 'PRO';
+
+  @override
+  String get faqGettingStarted => 'Перші кроки';
+
+  @override
+  String get faqStep1Title => 'Додайте об\'єкт';
+
+  @override
+  String get faqStep1Body =>
+      'Перейдіть у «Об\'єкти» → «+», заповніть назву, адресу та тип.';
+
+  @override
+  String get faqStep2Title => 'Додайте орендаря';
+
+  @override
+  String get faqStep2Body =>
+      'У «Орендарі» → «+» введіть дані, оберіть об\'єкт, встановіть оренду та день оплати.';
+
+  @override
+  String get faqStep3Title => 'Фіксуйте платежі';
+
+  @override
+  String get faqStep3Body =>
+      'У «Платежі» → «+» додайте платіж. Проведіть вправо по рядку, щоб відмітити як сплачено.';
+
+  @override
+  String get faqStep4Title => 'Облік витрат';
+
+  @override
+  String get faqStep4Body =>
+      'У «Витрати» → «+» додайте витрату, прив\'яжіть до об\'єкта та оберіть категорію.';
+
+  @override
+  String get faqStep5Title => 'Переглядайте звіти';
+
+  @override
+  String get faqStep5Body =>
+      '«Звіти» показують річний дохід, витрати і прибуток з графіком і таблицею.';
+
+  @override
+  String get faqTipsTitle => 'Поради';
+
+  @override
+  String get faqTip1 =>
+      'Проведіть вправо по платежу, щоб швидко відмітити як сплачено.';
+
+  @override
+  String get faqTip2 =>
+      'Натисніть на картку орендаря або об\'єкта, щоб побачити деталі.';
+
+  @override
+  String get faqTip3 =>
+      'Перемкніться на вигляд календаря у «Платежах», щоб бачити платежі за датами.';
+
+  @override
+  String get faqProProperties => 'До 20 об\'єктів';
+
+  @override
+  String get faqProNotifications => 'Налаштовувані сповіщення';
+
+  @override
+  String get faqProRecurring => 'Регулярні витрати';
 
   @override
   String get splashPhrases =>

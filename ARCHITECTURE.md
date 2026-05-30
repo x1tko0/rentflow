@@ -14,7 +14,7 @@
 
 ### Backend (опционально, для синхронизации)
 - **Supabase** — auth, PostgreSQL, realtime sync
-- Либо **Firebase** как альтернатива
+- Либо **Firebase** как альтернатива (реализовали как раз через фаербейз)
 
 ### Локальное хранение (offline-first)
 - SQLite через Drift

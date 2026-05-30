@@ -51,6 +51,7 @@ class _PropertyFormScreenState extends ConsumerState<PropertyFormScreen> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
 
