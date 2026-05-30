@@ -13,6 +13,7 @@ part 'app_database.g.dart';
 @DriftDatabase(tables: [Properties, Tenants, Payments, Expenses, RecurringExpenses, CustomCategories, MeterReadings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+  AppDatabase.forTesting(super.executor);
 
   @override
   int get schemaVersion => 2;
