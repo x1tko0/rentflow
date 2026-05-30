@@ -2,9 +2,9 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../shared/providers/pro_status_provider.dart';
 import '../../../shared/widgets/pro_gate_sheet.dart';
 import '../../../data/database/app_database.dart';
 import '../../../features/dashboard/dashboard_providers.dart';
@@ -235,7 +235,8 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
   }
 
   Future<void> _addCustomCategory(BuildContext context, AppLocalizations l10n) async {
-    if (!AppConstants.kDebugProUnlocked) {
+    final isPro = ref.read(proStatusProvider).valueOrNull ?? false;
+    if (!isPro) {
       showProGateSheet(context);
       return;
     }
@@ -269,6 +270,7 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
     final theme = Theme.of(context);
     final properties = ref.watch(propertiesProvider);
     final customCategories = ref.watch(_customCategoriesProvider).valueOrNull ?? [];
+    final isPro = ref.watch(proStatusProvider).valueOrNull ?? false;
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
@@ -312,6 +314,7 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
                     value: _category,
                     onChanged: (c) => setState(() => _category = c),
                     customCategories: customCategories,
+                    isPro: isPro,
                     onAddCustom: () => _addCustomCategory(context, l10n),
                     l10n: l10n,
                   ),
@@ -319,9 +322,10 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
                   _RecurringTile(
                     isRecurring: _isRecurring,
                     day: _recurringDay,
+                    isPro: isPro,
                     l10n: l10n,
                     onToggle: (v) {
-                      if (v && !AppConstants.kDebugProUnlocked) {
+                      if (v && !isPro) {
                         showProGateSheet(context);
                         return;
                       }
@@ -389,9 +393,10 @@ class _CategoryGrid extends StatelessWidget {
   final String value;
   final ValueChanged<String> onChanged;
   final List<CustomCategory> customCategories;
+  final bool isPro;
   final VoidCallback onAddCustom;
   final AppLocalizations l10n;
-  const _CategoryGrid({required this.value, required this.onChanged, required this.customCategories, required this.onAddCustom, required this.l10n});
+  const _CategoryGrid({required this.value, required this.onChanged, required this.customCategories, required this.isPro, required this.onAddCustom, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
@@ -441,7 +446,7 @@ class _CategoryGrid extends StatelessWidget {
                 Icon(Icons.add, size: 14, color: theme.colorScheme.primary),
                 const SizedBox(width: 4),
                 Text(l10n.customCategories, style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.primary)),
-                if (!AppConstants.kDebugProUnlocked) ...[
+                if (!isPro) ...[
                   const SizedBox(width: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
@@ -465,10 +470,11 @@ class _CategoryGrid extends StatelessWidget {
 class _RecurringTile extends StatelessWidget {
   final bool isRecurring;
   final int day;
+  final bool isPro;
   final AppLocalizations l10n;
   final ValueChanged<bool> onToggle;
   final ValueChanged<int> onDayChanged;
-  const _RecurringTile({required this.isRecurring, required this.day, required this.l10n, required this.onToggle, required this.onDayChanged});
+  const _RecurringTile({required this.isRecurring, required this.day, required this.isPro, required this.l10n, required this.onToggle, required this.onDayChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -487,7 +493,7 @@ class _RecurringTile extends StatelessWidget {
               Icon(Icons.repeat, size: 18, color: theme.colorScheme.onSurfaceVariant),
               const SizedBox(width: 10),
               Expanded(child: Text(l10n.repeatMonthly, style: theme.textTheme.bodyMedium)),
-              if (!AppConstants.kDebugProUnlocked)
+              if (!isPro)
                 Container(
                   margin: const EdgeInsets.only(right: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),

@@ -2,10 +2,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/constants/app_constants.dart';
 import '../../core/services/pdf_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../generated/app_localizations.dart';
+import '../../shared/providers/pro_status_provider.dart';
 import '../../shared/widgets/pro_gate_sheet.dart';
 import '../settings/settings_provider.dart';
 import 'reports_providers.dart';
@@ -87,7 +87,7 @@ Future<void> _exportCsv(BuildContext context, YearReport r, AppLocalizations l10
   }
 }
 
-class _ProLockedIconButton extends StatelessWidget {
+class _ProLockedIconButton extends ConsumerWidget {
   final IconData icon;
   final String tooltip;
   final VoidCallback onProUnlocked;
@@ -95,8 +95,9 @@ class _ProLockedIconButton extends StatelessWidget {
   const _ProLockedIconButton({required this.icon, required this.tooltip, required this.onProUnlocked, required this.l10n});
 
   @override
-  Widget build(BuildContext context) {
-    if (AppConstants.kDebugProUnlocked) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPro = ref.watch(proStatusProvider).valueOrNull ?? false;
+    if (isPro) {
       return IconButton(
         icon: Icon(icon),
         tooltip: tooltip,

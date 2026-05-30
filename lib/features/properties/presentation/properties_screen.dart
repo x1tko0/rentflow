@@ -6,6 +6,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../data/database/app_database.dart';
 import '../../../features/dashboard/dashboard_providers.dart';
 import '../../../generated/app_localizations.dart';
+import '../../../shared/providers/pro_status_provider.dart';
 import '../../../shared/providers/repository_providers.dart';
 import '../../../features/settings/settings_provider.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
@@ -93,7 +94,8 @@ class _PropertiesScreenState extends ConsumerState<PropertiesScreen> {
   }
 
   Future<void> _openForm(BuildContext context, Property? property) async {
-    if (property == null && !AppConstants.kDebugProUnlocked) {
+    final isPro = ref.read(proStatusProvider).valueOrNull ?? false;
+    if (property == null && !isPro) {
       final list = ref.read(propertiesProvider).valueOrNull ?? [];
       if (list.length >= AppConstants.freePropertyLimit) {
         if (context.mounted) showProGateSheet(context);

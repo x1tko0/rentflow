@@ -20,6 +20,7 @@
 - [ ] Короткое описание (до 80 символов)
 - [ ] Полное описание (до 4000 символов)
 - [ ] Privacy Policy URL: https://x1tko0.github.io/rentflow/privacy/
+- [ ] Data Safety: disclose Firebase Crashlytics diagnostics/crash data after Crashlytics integration
 
 ### Шаг 2: Play Console — первая загрузка
 - [ ] Создать приложение → пакет `io.orbitray.rentflow`
@@ -46,8 +47,8 @@
 
 **Порядок шагов:**
 1. Создать продукты в Play Console (Monetize → Subscriptions):
-   - `rentflow_pro_monthly` — $2.99/мес
-   - `rentflow_pro_yearly` — $24.99/год
+   - `rentflow_pro_monthly` — $6.99/мес
+   - `rentflow_pro_yearly` — $59.99/год
 2. Зарегистрироваться на app.revenuecat.com
 3. Создать проект → Android → пакет `io.orbitray.rentflow`
 4. Подключить Google Play (service account JSON)

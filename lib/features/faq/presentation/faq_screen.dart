@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../generated/app_localizations.dart';
+import '../../../shared/widgets/pro_gate_sheet.dart';
 
 class FaqScreen extends StatelessWidget {
   const FaqScreen({super.key});
@@ -210,16 +211,19 @@ class _ProTab extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(l10n.proDescription, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
                     const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(l10n.proCta, style: const TextStyle(color: Color(0xFF4F6AF0), fontSize: 13, fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 2),
-                          Text(l10n.proCtaYearly, style: TextStyle(color: const Color(0xFF4F6AF0).withValues(alpha: 0.6), fontSize: 11)),
-                        ],
+                    GestureDetector(
+                      onTap: () => showProGateSheet(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(l10n.proCta, style: const TextStyle(color: Color(0xFF4F6AF0), fontSize: 13, fontWeight: FontWeight.w700)),
+                            const SizedBox(height: 2),
+                            Text(l10n.proCtaYearly, style: TextStyle(color: const Color(0xFF4F6AF0).withValues(alpha: 0.6), fontSize: 11)),
+                          ],
+                        ),
                       ),
                     ),
                   ],

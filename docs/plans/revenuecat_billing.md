@@ -22,19 +22,17 @@ purchases_flutter: ^8.0.0
 3. Подключить Google Play (service account JSON)
 4. Создать Entitlement: `pro`
 5. Создать продукты:
-   - `rentflow_pro_monthly` — $2.99/мес
-   - `rentflow_pro_yearly` — $24.99/год
+   - `rentflow_pro_monthly` — $6.99/мес
+   - `rentflow_pro_yearly` — $59.99/год
 6. Получить Public SDK key → вставить в `AppConstants.revenueCatApiKey`
+7. После загрузки билда с Billing SDK поменять Play Console → "Можно ли в приложении купить цифровые товары?" → "Да"
 
 ---
 
 ## Код — что реализовать
 
 ### 1. AppConstants (`lib/core/constants/app_constants.dart`)
-```dart
-static const String revenueCatApiKey = 'YOUR_REVENUECAT_PUBLIC_KEY';
-static const String entitlementPro = 'pro';
-```
+`AppConstants` уже содержит `revenueCatApiKey`, `entitlementPro`, `proMonthlyProductId`, `proYearlyProductId`. До получения реального ключа `revenueCatApiKey` остаётся `TODO_REVENUECAT_PUBLIC_SDK_KEY`.
 
 ### 2. BillingService (`lib/core/services/billing_service.dart`)
 ```dart
@@ -69,15 +67,12 @@ await BillingService.init();  // добавить после globalPrefs
 
 ---
 
-## Порядок реализации
+## Порядок завершения
 
-1. Добавить `purchases_flutter` в `pubspec.yaml`
-2. Добавить `AppConstants.revenueCatApiKey` (пока заглушка `'PLACEHOLDER'`)
-3. Реализовать `BillingService`
-4. Создать `proStatusProvider`
-5. Заменить все `kDebugProUnlocked` на `ref.watch(proStatusProvider)`
-6. Подключить покупку в `ProGateSheet`
-7. Подключить restore в `RestorePurchasesTile`
-8. Вставить реальный SDK key после получения из RevenueCat
+1. Создать продукты в Play Console.
+2. Создать RevenueCat offering с monthly и annual packages.
+3. Вставить реальный RevenueCat Public SDK key в `AppConstants.revenueCatApiKey`.
+4. Пересобрать AAB с новым `versionCode`.
+5. В Play Console поменять цифровые товары на "Да" и загрузить новый билд.
 
-> Шаги 1–7 можно сделать до Play Store (с заглушкой ключа). Шаг 8 — после регистрации в RevenueCat.
+Кодовая интеграция уже подготовлена: `BillingService`, `proStatusProvider`, Pro purchase sheet и restore purchases.

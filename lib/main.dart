@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app/app.dart';
+import 'core/services/billing_service.dart';
+import 'core/services/crash_reporting_service.dart';
 import 'core/services/notification_service.dart';
 import 'data/database/app_database.dart';
 import 'data/repositories/payment_repository.dart';
@@ -18,9 +20,11 @@ bool skipBiometricOnce = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await CrashReportingService.init();
   await initializeDateFormatting();
   await NotificationService.init();
   globalPrefs = await SharedPreferences.getInstance();
+  await BillingService.init();
   runApp(_AppRoot(key: _rootKey));
 }
 

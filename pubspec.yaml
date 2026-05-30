@@ -1,7 +1,7 @@
 name: rentflow
 description: "Менеджер аренды для частных арендодателей"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.11.4
@@ -51,6 +51,9 @@ dependencies:
   # Links & Biometric
   url_launcher: ^6.3.0
   local_auth: ^2.3.0
+  purchases_flutter: ^10.2.0
+  firebase_core: ^4.9.0
+  firebase_crashlytics: ^5.2.2
 
 dev_dependencies:
   flutter_test:

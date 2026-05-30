@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/services/billing_service.dart';
 import '../../main.dart' show restartApp, skipBiometricOnce;
+import '../../shared/providers/pro_status_provider.dart';
 import '../../shared/widgets/pro_gate_sheet.dart';
 import '../../core/services/backup_service.dart';
 import '../../core/services/biometric_service.dart';
@@ -42,6 +44,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final settings = ref.watch(settingsProvider);
+    final isPro = ref.watch(proStatusProvider).valueOrNull ?? false;
     final notifier = ref.read(settingsProvider.notifier);
 
     return Scaffold(
@@ -105,9 +108,10 @@ class SettingsScreen extends ConsumerWidget {
             _NotifyDaysTile(
               days: settings.notificationDaysBefore,
               enabled: settings.notificationsEnabled,
+              isPro: isPro,
               l10n: l10n,
               onTap: () {
-                if (!AppConstants.kDebugProUnlocked) {
+                if (!isPro) {
                   showProGateSheet(context);
                   return;
                 }
@@ -115,9 +119,9 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
             _Divider(),
-            _BackupTile(l10n: l10n),
+            _BackupTile(l10n: l10n, isPro: isPro),
             _Divider(),
-            _RestoreTile(l10n: l10n),
+            _RestoreTile(l10n: l10n, isPro: isPro),
             _Divider(),
             _RestorePurchasesTile(l10n: l10n),
           ]),
@@ -264,7 +268,7 @@ class _ProBanner extends StatelessWidget {
                 Text(l10n.proDescription, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 12),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => showProGateSheet(context),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
@@ -524,14 +528,15 @@ class _NotificationsToggleTile extends StatelessWidget {
 class _NotifyDaysTile extends StatelessWidget {
   final int days;
   final bool enabled;
+  final bool isPro;
   final AppLocalizations l10n;
   final VoidCallback onTap;
-  const _NotifyDaysTile({required this.days, required this.enabled, required this.l10n, required this.onTap});
+  const _NotifyDaysTile({required this.days, required this.enabled, required this.isPro, required this.l10n, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLocked = !AppConstants.kDebugProUnlocked;
+    final isLocked = !isPro;
     final textColor = isLocked
         ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
         : theme.colorScheme.onSurface;
@@ -564,7 +569,8 @@ class _NotifyDaysTile extends StatelessWidget {
 
 class _BackupTile extends StatefulWidget {
   final AppLocalizations l10n;
-  const _BackupTile({required this.l10n});
+  final bool isPro;
+  const _BackupTile({required this.l10n, required this.isPro});
 
   @override
   State<_BackupTile> createState() => _BackupTileState();
@@ -574,7 +580,7 @@ class _BackupTileState extends State<_BackupTile> {
   bool _loading = false;
 
   Future<void> _backup() async {
-    if (!AppConstants.kDebugProUnlocked) {
+    if (!widget.isPro) {
       showProGateSheet(context);
       return;
     }
@@ -601,7 +607,7 @@ class _BackupTileState extends State<_BackupTile> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLocked = !AppConstants.kDebugProUnlocked;
+    final isLocked = !widget.isPro;
     final textColor = isLocked
         ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
         : theme.colorScheme.onSurface;
@@ -632,7 +638,8 @@ class _BackupTileState extends State<_BackupTile> {
 
 class _RestoreTile extends StatefulWidget {
   final AppLocalizations l10n;
-  const _RestoreTile({required this.l10n});
+  final bool isPro;
+  const _RestoreTile({required this.l10n, required this.isPro});
 
   @override
   State<_RestoreTile> createState() => _RestoreTileState();
@@ -642,7 +649,7 @@ class _RestoreTileState extends State<_RestoreTile> {
   bool _loading = false;
 
   Future<void> _restore() async {
-    if (!AppConstants.kDebugProUnlocked) {
+    if (!widget.isPro) {
       showProGateSheet(context);
       return;
     }
@@ -674,7 +681,7 @@ class _RestoreTileState extends State<_RestoreTile> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLocked = !AppConstants.kDebugProUnlocked;
+    final isLocked = !widget.isPro;
     final textColor = isLocked
         ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
         : theme.colorScheme.onSurface;
@@ -703,25 +710,33 @@ class _RestoreTileState extends State<_RestoreTile> {
   }
 }
 
-class _RestorePurchasesTile extends StatefulWidget {
+class _RestorePurchasesTile extends ConsumerStatefulWidget {
   final AppLocalizations l10n;
   const _RestorePurchasesTile({required this.l10n});
 
   @override
-  State<_RestorePurchasesTile> createState() => _RestorePurchasesTileState();
+  ConsumerState<_RestorePurchasesTile> createState() => _RestorePurchasesTileState();
 }
 
-class _RestorePurchasesTileState extends State<_RestorePurchasesTile> {
+class _RestorePurchasesTileState extends ConsumerState<_RestorePurchasesTile> {
   bool _loading = false;
 
   Future<void> _restore() async {
     setState(() => _loading = true);
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    setState(() => _loading = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(widget.l10n.restorePurchasesSuccess)),
-    );
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final restored = await BillingService.restorePurchases();
+      ref.invalidate(proStatusProvider);
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text(restored ? widget.l10n.restorePurchasesSuccess : widget.l10n.proFeatureMessage)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override

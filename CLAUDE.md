@@ -30,7 +30,7 @@ lib/
 │   ├── onboarding/   # Показывается при первом запуске
 │   └── settings/     # Валюта, язык, тема, биометрия, Privacy Policy
 ├── generated/        # Автогенерированные файлы локализации (не редактировать вручную)
-├── l10n/             # ARB-файлы для 12 языков (en, ru, uk, de, fr, es, it, pl, pt, tr, ja, ar)
+├── l10n/             # ARB-файлы для 13 языков (en, ru, uk, de, fr, es, it, pl, pt, tr, ja, ar, zh)
 └── shared/           # Shared widgets, providers (databaseProvider, repositoryProviders)
 ```
 
@@ -49,7 +49,7 @@ lib/
 - Локальное хранение
 - Уведомления (за 3 дня до оплаты — фиксировано)
 
-### Pro ($2.99/мес)
+### Pro ($6.99/мес или $59.99/год)
 - До 20 объектов
 - PDF-отчёты
 - Бэкап Google Drive
